@@ -31,8 +31,8 @@ module.exports = {
         sans: ["Lato", ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        "afruna-base": "#3C3C3C",
-        "afruna-blue": "#282C4B",
+        "afruna-blue": "#001F3F",
+        "primaryGreen": "#399878",
         "afruna-gold": "#FF9017",
         "afruna-gray": "#747582",
         border: "hsl(var(--border))",

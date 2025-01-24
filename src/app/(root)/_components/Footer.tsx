@@ -99,9 +99,9 @@ const Footer: FC<FooterProps> = ({}) => {
           </div>
         </div>
       </div>
-      <div className="w-full p-3 space-x-2 space-y-2 text-center text-xs text-afruna-blue bg-gradient-to-br from-orange-100 to-gray-200 via-orange-400">
+      <div className="w-full p-3 space-x-2 space-y-2 text-center text-xs text-afruna-blue bg-[#399878]">
         <span>&copy; {new Date().getFullYear()}</span>
-        <span>Afruna Global Company | All Rights Reserved.</span>
+        <span>Help Buddy Global Company | All Rights Reserved.</span>
       </div>
     </footer>
   )

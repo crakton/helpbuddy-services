@@ -44,6 +44,8 @@ import {
   useLoginUserMutation,
   useRegisterUserMutation,
 } from "@/lib/redux/features/apis/auth_api";
+import { MdHelp } from "react-icons/md";
+import ItemPicker from "@/components/ItemPicker";
 
 interface AuthFormProps {}
 
@@ -101,6 +103,12 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
   const [userRegister, registerResult] = useRegisterUserMutation();
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const ROLES = ["Service Provider", "Employer"];
+
+  const selectRole = () => {
+    console.log("hello");
+  };
   const onSubmit: SubmitHandler<FieldValues> = useCallback(
     async (data) => {
       if (variant === "REGISTER") {
@@ -374,13 +382,16 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
           </aside>
 
           {variant === "REGISTER" ? (
-            <aside className="flex flex-col gap-2 md:flex-row">
+            <div>
+
+            <aside className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:w-full">
               <Input
                 label={`Confirm Password`}
                 type={showConfirmedPassword ? "text" : "password"}
                 placeholder={!showConfirmedPassword ? "*******" : "password"}
                 id={`confirmPassword`}
                 register={register}
+                
                 errors={errors}
                 extraComponent={
                   <div onClick={toggleshowConfirmedPassword}>
@@ -391,9 +402,26 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
                     )}
                   </div>
                 }
-              />
+                />
+             
             </aside>
+            
+                <ItemPicker
+                headerTitle="Select Role"
+                  contentClassName={
+                    "bg-white p-4 text-afruna-blue  text-xs z-40 rounded-md"
+                  }
+                  triggerClassName={
+                    "flex gap-1 px-2 py-1 md:font-bold items-center text-afruna-blue"
+                  }
+                  getSelected={selectRole}
+                  items={ROLES}
+                  placeholder="Role"
+                />
+                </div>
+            
           ) : null}
+          
         </section>
 
         {variant === "LOGIN" ? (

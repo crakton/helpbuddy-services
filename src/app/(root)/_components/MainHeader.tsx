@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   MdHelp,
   MdMenu,
+  MdOutlineLogin,
   MdOutlineLogout,
   MdOutlineQrCodeScanner,
   MdSearch,
@@ -37,9 +38,7 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
   const [selectedcategory, setselectedCategory] = useState("");
 
   const router = useRouter();
-  const {profile_data} = useAppSelector((state) => state.profile);
-;
-
+  const { profile_data } = useAppSelector((state) => state.profile);
   const toggleCategoryMenu = useCallback(
     () => setIsCategoryMenuOpen(!isCategoryMenuOpen),
     [isCategoryMenuOpen]
@@ -62,13 +61,13 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
     //       break;
     //   }
   }, []);
-const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const handleLogOut = useCallback(() => {
     router.replace("/authentication");
   }, [router]);
-  const [show, setShow] = useState<boolean>(true);
+  const [show, setShow] = useState<boolean>(false);
   return (
-    <header className="sticky top-0 bg-gradient-to-r from-orange-300 to-orange-50 z-30">
+    <header className="sticky top-0 bg-gradient-to-r from-[#2a2c79] to-[#399878] z-30">
       <nav className="max-w-[97%] md:max-w-[95%] w-full flex justify-between items-center mx-auto p-6 lg:max-w-[90%]">
         <div className="flex justify-between items-center gap-2 md:gap-0 sm:max-w-[60%] sm:w-full md:w-fit">
           {!sideNavOpen ? (
@@ -83,8 +82,9 @@ const dispatch = useAppDispatch();
             />
           )}
           <Link href={"/"} className="flex justify-center items-center">
-            <div className="w-[9rem] sm:w-[10rem] h-[1.5rem] md:w-[12rem] md:h-[2.5rem] lg:w-[14rem] lg:h-[3.7rem] overflow-hidden relative">
-              <Image src={imgs.logo} alt="logo" width={300} height={200} />
+            <div className="flex items-center gap-4 text-lg">
+              <Image src={imgs.logo} alt="logo" width={50} height={50} />
+              <p className="font-bold text-white  font-sans">Help Buddy</p>
             </div>
           </Link>
         </div>
@@ -135,9 +135,9 @@ const dispatch = useAppDispatch();
                     3
                   </span>
                 </Link> */}
-                <Link href={"/chat"}>
+                {/* <Link href={"/chat"}>
                   <BsFillChatLeftTextFill className="text-[0.95rem] sm:text-[1.1rem]" />
-                </Link>
+                </Link> */}
                 <ItemPicker
                   mobileClassName="hidden md:flex lg:hidden xl:flex text-sm lg:text-base"
                   triggerClassName="flex gap-2 items-center capitalize"
@@ -147,10 +147,18 @@ const dispatch = useAppDispatch();
                   getSelected={(val) => console.log(val)}
                   leftTriggerIcon={
                     <div className="w-[1.6rem] h-[1.6rem] md:w-8 md:h-8 lg:w-10 lg:h-10  rounded-full transition-all hover:scale-90 ease-in-out duration-300 overflow-hidden relative flex justify-center items-center">
-                      <Image src={verifyImageUrl(profile_data?.avatar as string)} alt="Your image" fill />
+                      <Image
+                        src={verifyImageUrl(profile_data?.avatar as string)}
+                        alt="Your image"
+                        fill
+                      />
                     </div>
                   }
-                  placeholder={`${profile_data?.firstName} ${profile_data?.lastName}`}
+                  placeholder={`${
+                    profile_data
+                      ? `${profile_data.firstName}, ${profile_data?.lastName}`
+                      : "user name"
+                  }`}
                   profileLinks={[
                     {
                       name: "Profile",
@@ -175,11 +183,26 @@ const dispatch = useAppDispatch();
                   ]}
                   extraComponent={
                     <button
-                      onClick={handleLogOut}
+                      onClick={() => {
+                        if (profile_data) {
+                          handleLogOut();
+                        }
+                        router.push("/authentication");
+                      }}
                       className="bg-gradient-to-b from-blue-400 to-blue-900 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-800 transition duration-500 my-2 w-full text-white p-2 rounded-md flex items-center justify-center space-x-2"
                     >
-                      <MdOutlineLogout className="text-lg" />
-                      <span className="text-md">Log out</span>
+                      {profile_data ? (
+                        <>
+                          <MdOutlineLogout className="text-lg" />
+                          <span className="text-md">Log out</span>
+                        </>
+                      ) : (
+                        <>
+                          <MdOutlineLogin className="text-lg" />
+                          <span className="text-md">Join Us</span>
+                        </>
+                      )}
+                     
                     </button>
                   }
                 />

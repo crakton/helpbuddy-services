@@ -8,11 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { imgs } from "@/constants/images";
-import { RxChevronDown } from "react-icons/rx";
 import { IoIosArrowUp } from "react-icons/io";
 import { FaTimes } from "react-icons/fa";
-import { NewsLetter } from "@/components/NewsLetter";
-import Footer from "@/app/(root)/_components/Footer";
 
 interface pageProps {}
 
