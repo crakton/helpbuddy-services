@@ -11,17 +11,13 @@ import {
   operationMethods,
 } from "@/constants/data";
 import { imgs } from "@/constants/images";
-import { useGetCategoriesByCountsQuery } from "@/lib/redux/features/apis/categories_api";
-import { useGetProvidersQuery } from "@/lib/redux/features/apis/providers_api";
-import { useGetServicesByCountQuery } from "@/lib/redux/features/apis/services_api";
+
 import Image from "next/image";
 import Link from "next/link";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 
 export default function Home() {
-  const { data, isSuccess } = useGetCategoriesByCountsQuery(10);
-  const services = useGetServicesByCountQuery(10);
-  const providers = useGetProvidersQuery();
+
 
     return (
     <main className="flex flex-col">
@@ -55,12 +51,12 @@ export default function Home() {
           Featured Categories
         </h1>
         <p className="text-afruna-gray md:mt-2">What services do you need?</p>
-        <div className="flex flex-row flex-wrap sm:justify-center gap-6 md:gap-8 mt-8 lg:mt-10 ">
+        {/* <div className="flex flex-row flex-wrap sm:justify-center gap-6 md:gap-8 mt-8 lg:mt-10 ">
           {isSuccess &&
             data?.data.map((item) => {
               return <CategoryCard key={item._id} item={item} />;
             })}
-        </div>
+        </div> */}
         <div className="my-4 md:flex justify-end">
           <Link
             href={"/categories"}
@@ -160,7 +156,7 @@ export default function Home() {
         <div className="flex flex-wrap gap-4 mt-8 ">
           
            {
-          services.isSuccess && services.data.data.length > 0? services.data.data.map((item)=> <ServicesCard item={item} key={item._id} />): <NoThingFound />
+          // services.isSuccess && services.data.data.length > 0? services.data.data.map((item)=> <ServicesCard item={item} key={item._id} />): <NoThingFound />
            }
         </div>
       </section>
@@ -185,7 +181,7 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-row flex-wrap sm:justify-center gap-6 mt-8 lg:mt-10">
-        {providers.isSuccess && providers.data.length > 0? providers.data.slice(0,10).map(provider => <ProviderCard key={provider._id} item={provider} />):<NoThingFound />}
+        {/* {providers.isSuccess && providers.data.length > 0? providers.data.slice(0,10).map(provider => <ProviderCard key={provider._id} item={provider} />):<NoThingFound />} */}
         </div>
       </section>
       {/* testimonial section */}

@@ -1,13 +1,16 @@
 "use client";
 import CategoryCard from "@/components/CategoryCard";
-import { useGetCategoriesByPaginationQuery} from "@/lib/redux/features/apis/categories_api";
 import { FC, useState } from "react";
 
 interface pageProps {}
 
 const Page: FC<pageProps> = ({}) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const {data} = useGetCategoriesByPaginationQuery(currentPage);
+  const data = [{
+    data:[{
+      
+    }]
+  }]
   return (
     <>
       <section className="bg-white flex justify-center flex-col font-bold items-center gap-4 h-[11rem]">

@@ -1,14 +1,25 @@
 import { allservices } from "@/constants/data";
 import { headers } from "@/constants/headers";
 import { ICategory } from "@/interfaces";
-import { useGetCategoriesQuery } from "@/lib/redux/features/apis/categories_api";
 import axios from "axios";
 import Link from "next/link";
 import { FC, useMemo, useState } from "react";
 
 interface AllServicesModelProps {}
 const AllServicesModel: FC<AllServicesModelProps> = ({}) => {
-  const { isSuccess, data } = useGetCategoriesQuery();
+  const { isSuccess, data } = {
+    isSuccess:false,
+    data:{
+      data:[
+        {
+          _id:"",
+          name:"",
+          
+        }
+
+      ]
+    }
+  }
   // const memorizedChidrenCategories = useMemo(() => {
   //   const catChildren = [];
   //   data?.data.map(async (category) => {

@@ -1,27 +1,21 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage";
-const authPersistConfig = {
-  key: "auth",
-  storage,
-};
+import { createSlice } from "@reduxjs/toolkit";
+import { Models } from "appwrite";
 
-type TInitialAuthState = {
-  isAuthenticated: boolean;
-};
-const authSlice = createSlice({
-  initialState: { isAuthenticated: false } as TInitialAuthState,
-  name: "auth",
-  reducers: {
-    login(state) {
-      state.isAuthenticated = true;
-    },
-    logout(state) {
-      state.isAuthenticated = false;
-    },
-  },
-});
 
-// Export your authSlice and persist config
-export { authPersistConfig };
-export const { login, logout } = authSlice.actions;
-export default authSlice.reducer;
+interface initialStatus  {
+  user:Models.User<Models.Preferences>
+}
+const authSlice  = createSlice({
+  name:"auth",
+  initialState:{} as initialStatus,
+  reducers:{
+    setUser:(state,action)=>{
+      state.user = action.payload
+
+    }
+  }
+})
+
+
+export const {setUser} = authSlice.actions
+export const authReducer  = authSlice.reducer

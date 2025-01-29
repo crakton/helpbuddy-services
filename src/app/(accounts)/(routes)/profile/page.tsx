@@ -22,14 +22,19 @@ import { setProfile } from "@/lib/redux/features/slices/profileSlice";
 import { IUser } from "@/interfaces";
 import * as Select from "@radix-ui/react-select";
 import { verifyImageUrl } from "@/utils/verify_image_url";
+import { useAuth } from "@/context/UserContext";
+import { handleImageUpload } from "@/lib/services/userServices";
+import FileUploadDiv from "@/components/ui/FileUpload";
 
 interface pageProps {}
 const ENDPOINT = "/api/users/me";
 const ProfilePage: FC<pageProps> = ({}) => {
-  const { profile_data } = useAppSelector((state) => state.profile);
+
+  const {user,logout}  = useAuth()
+  // const { user } = useAppSelector((state) => state.profile);
   const dispatch = useAppDispatch();
   const dialerCode = useMemo(() => {
-    const code = profile_data?.phoneNumber?.split("-")[0];
+    const code = user?.phoneNumber?.split("-")[0];
     var iso = "ng";
     defaultCountries.filter((c) => {
       const { dialCode, iso2 } = parseCountry(c);
@@ -38,41 +43,54 @@ const ProfilePage: FC<pageProps> = ({}) => {
     });
 
     return iso;
-  }, [profile_data?.phoneNumber]);
+  }, [user?.phoneNumber]);
   const [_country, _setCountry] = useState<{ Code: string; Name: string }>({
     Code: dialerCode,
-    Name: profile_data?.country as string,
+    Name: user?.country as string,
   });
+
+
+  const [isUploading, setIsUploading] = useState(false); // State to track upload progress
+
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event)
+    const files = event.target.files;
+    
+    // Ensure files are present
+    if (!files || files.length === 0) {
+      toast.warn("No file selected.");
+      return;
+    }
+  
+    const file = files[0]; // Get the first selected file
+  
+    setIsUploading(true); // Set uploading state
+  
+    try {
+      // Call the function to handle image upload
+      await handleImageUpload([file], user?.id); 
+  
+      toast.info("Avatar uploaded successfully!");
+    } catch (error) {
+      toast.warn("Avatar uploading failed");
+      console.error("Error during avatar upload:", error);
+    } finally {
+      setIsUploading(false); // Reset uploading state
+    }
+  };
+  
+  console.log(user)
+  
 
   const { phone, country, setCountry, handlePhoneValueChange, inputRef } =
     usePhoneInput({
       charAfterDialCode: "-",
       prefix: "+",
       defaultCountry: "ng",
-      value: profile_data?.phoneNumber,
+      value: user?.phoneNumber,
     });
-  const handleImageUpload = useCallback(
-    async (files: ExtFile[]) => {
-      if (files.length > 0) {
-        const { file } = files[0];
-        try {
-          const formdata = new FormData();
-          formdata.append("avatar", file as Blob);
-          const response = await axios.put<{ data: IUser }>(
-            ENDPOINT,
-            formdata,
-            { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
-          );
-          console.log(response);
-          toast.info("Upload succesful");
-          dispatch(setProfile(response.data.data));
-        } catch (error) {
-          toast.warn("Avatar uploading failed");
-        }
-      }
-    },
-    [dispatch]
-  );
+
+
 
   const handleSubmitContact = useCallback(async () => {
     type TPayload = {
@@ -117,32 +135,27 @@ const ProfilePage: FC<pageProps> = ({}) => {
         <div className="flex flex-col gap-8 w-full bg-white p-6 md:max-w-[75%] rounded-xl drop-shadow">
           <div className="flex lg:pl-6 lg:pt-4 gap-2 sm:gap-3 justify-start items-end">
             <div className="w-[4.5rem] h-[4.5rem] sm:w-[5rem] sm:h-[5rem] lg:w-[7.5rem] lg:h-[7.5rem] shadow rounded-full overflow-hidden relative flex justify-center items-center">
-              <Image
-                 src={verifyImageUrl(profile_data?.avatar as string)}
-                alt="Your image"
-                fill
-              />
+            <Image
+  src={
+    user?.profilePicture
+      ? `${user?.profilePicture}?project=679a0ccf003d8130276a&mode=admin`
+      : "/default-avatar.png" // Make sure this exists in your public folder
+  }
+  alt="Your image"
+  fill
+/>
+
             </div>
             <div className="flex flex-col justify-end items-start gap-1">
               <h4 className="capitalize font-semibold text-[0.9rem] lg:text-lg text-start p-2 leading-3">
-                {profile_data?.firstName} {profile_data?.lastName}
+                {user?.name}
               </h4>
-              <FileInputButton
-                maxFiles={1}
-                onChange={handleImageUpload}
-                className=" py-2 max-w-[10rem] w-full text-white bg-gradient-to-b from-blue-400 to-blue-900 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-800 transition duration-500 rounded"
-              >
-                <span className="capitalize font-semibold text-xs sm:text-sm lg:text-base">
-                  Upload
-                </span>
-                <span className="lowercase font-semibold px-1 text-xs sm:text-sm lg:text-base">
-                  {" "}
-                  a{" "}
-                </span>
-                <span className="capitalize font-semibold text-xs sm:text-sm lg:text-base">
-                  Photo
-                </span>
-              </FileInputButton>
+              <FileUploadDiv
+  onChange={onFileChange} // onFileChange function to handle file selection
+  isUploading={isUploading} // Boolean indicating the uploading state
+/>
+
+
             </div>
           </div>
           <div className="w-full h-[1px] lg:flex border border-[#D1D1D1]" />
@@ -165,7 +178,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
                     disabled={true}
                     id={"firstName"}
                     type={"text"}
-                    value={profile_data?.firstName}
+                    value={user?.name}
                     autoComplete={"firstName"}
                     onChange={() => {}}
                     className="w-full capitalize bg-transparent px-2 py-[0.4rem] sm:py-2"
@@ -177,7 +190,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
                   htmlFor={"lastName"}
                   className="text-sm font-semibold text-[#232F3E] leading-6"
                 >
-                  {`Last Name`}
+                  {`Email`}
                 </label>
                 <div
                   className={`flex mt-1 justify-between items-center border-[2px] focus-within:border-[2px] focus-within:border-[#FFDBB6] focus-within:shadow-md w-full text-sm
@@ -189,7 +202,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
                     disabled={true}
                     id={"lastName"}
                     type={"text"}
-                    value={profile_data?.lastName}
+                    value={user?.email}
                     autoComplete={"lastName"}
                     onChange={() => {}}
                     className="w-full capitalize bg-transparent px-2 py-[0.4rem] sm:py-2"
@@ -197,7 +210,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
                 </div>
               </fieldset>
             </div>
-            <fieldset className="w-full lg:max-w-[47.4%]">
+            {/* <fieldset className="w-full lg:max-w-[47.4%]">
               <label
                 htmlFor={"email"}
                 className="text-sm font-semibold text-[#232F3E] leading-6"
@@ -215,11 +228,11 @@ const ProfilePage: FC<pageProps> = ({}) => {
                   id={"email"}
                   type={"email"}
                   autoComplete={"email"}
-                  value={profile_data?.email}
+                  value={user?.email}
                   className="w-full bg-transparent px-2 py-[0.4rem] sm:py-2"
                 />
               </div>
-            </fieldset>
+            </fieldset> */}
             {/* <div className="flex mt-4 mb-6 sm:mb-8 lg:mb-10 justify-center lg:justify-end lg:mt-8 items-center">
                       <Button className="border rounded-md border-[#FF9E3A] hover:scale-90 duration-500 transition-all">
                         Update Information
@@ -276,7 +289,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
                     ref={inputRef}
                     value={phone}
                     onChange={handlePhoneValueChange}
-                    placeholder="Enter your phone number"
+                    placeholder={user?.prefs?.phoneNumber}
                   />
                 </div>
               </fieldset>
@@ -289,7 +302,8 @@ const ProfilePage: FC<pageProps> = ({}) => {
                   Country of Resident
                 </label>
                 <ReactFlagsSelect
-                  placeholder={_country.Name}
+                  placeholder={user?.countryOfResidence}
+                  
                   id="country"
                   searchable
                   onSelect={(iso) => {
@@ -316,7 +330,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
               </fieldset>
             </div>
 
-            {profile_data && profile_data.addresses?.length ? (
+            {user && user.addresses?.length ? (
               <fieldset className="w-full lg:max-w-[48%]">
                 <label
                   htmlFor={"address1"}
@@ -330,7 +344,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
                   transition duration-300 sm:text-sm sm:leading-6 
                   `}
                 >
-                  {profile_data?.addresses.map((address) => (
+                  {user?.addresses.map((address) => (
                     <input
                       key={address.concat(
                         Math.floor(Math.random() * 200).toLocaleString()

@@ -15,7 +15,7 @@ function ReduxWrapper({ children }: { children: ReactNode }) {
       <PersistGate persistor={persistor} loading={<PageLoader />}>
         {children}
       </PersistGate>
-    </Provider>
+  //  </Provider>
   );
 }
 

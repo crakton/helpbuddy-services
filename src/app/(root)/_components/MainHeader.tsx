@@ -29,6 +29,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks";
 import { profile } from "console";
 import { verifyImageUrl } from "@/utils/verify_image_url";
 import { setProfile } from "@/lib/redux/features/slices/profileSlice";
+import { useAuth } from "@/context/UserContext";
 
 interface MainHeaderProps {}
 
@@ -37,8 +38,10 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(true);
   const [selectedcategory, setselectedCategory] = useState("");
 
+
+
   const router = useRouter();
-  const { profile_data } = useAppSelector((state) => state.profile);
+  const { user, logout} = useAuth()
   const toggleCategoryMenu = useCallback(
     () => setIsCategoryMenuOpen(!isCategoryMenuOpen),
     [isCategoryMenuOpen]
@@ -50,7 +53,7 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
     () => setIsShow((prev) => !prev),
     []
   );
-
+console.log(user?.profilePicture)
   const handleHelpSelection = useCallback((value: string) => {
     //   switch (value) {
     //     case HELP[0]:
@@ -148,15 +151,15 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
                   leftTriggerIcon={
                     <div className="w-[1.6rem] h-[1.6rem] md:w-8 md:h-8 lg:w-10 lg:h-10  rounded-full transition-all hover:scale-90 ease-in-out duration-300 overflow-hidden relative flex justify-center items-center">
                       <Image
-                        src={verifyImageUrl(profile_data?.avatar as string)}
+                        src={verifyImageUrl(user?.avatar as string)}
                         alt="Your image"
                         fill
                       />
                     </div>
                   }
                   placeholder={`${
-                    profile_data
-                      ? `${profile_data.firstName}, ${profile_data?.lastName}`
+                    user
+                      ? `${user.name}`
                       : "user name"
                   }`}
                   profileLinks={[
@@ -184,14 +187,14 @@ const MainHeader: FC<MainHeaderProps> = ({}) => {
                   extraComponent={
                     <button
                       onClick={() => {
-                        if (profile_data) {
-                          handleLogOut();
+                        if (user) {
+                          logout();
                         }
                         router.push("/authentication");
                       }}
                       className="bg-gradient-to-b from-blue-400 to-blue-900 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-800 transition duration-500 my-2 w-full text-white p-2 rounded-md flex items-center justify-center space-x-2"
                     >
-                      {profile_data ? (
+                      {user ? (
                         <>
                           <MdOutlineLogout className="text-lg" />
                           <span className="text-md">Log out</span>

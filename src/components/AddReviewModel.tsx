@@ -8,7 +8,6 @@ import { Button } from "./ui/button";
 import { BsStar, BsStarFill, BsStarHalf } from "react-icons/bs";
 import { FieldValue } from "react-hook-form";
 import { IBooking } from "@/interfaces";
-import { useSendReviewMutation } from "@/lib/redux/features/apis/reviews_api";
 import { Loader, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -27,7 +26,12 @@ const AddReviewModel: FC<AddReviewModelProps> = ({
   const [comment, setComment] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const starRef = useRef<HTMLSpanElement | null>(null);
-  const [req, res] = useSendReviewMutation();
+
+
+
+ 
+
+
   const handleStarClick = useCallback(
     (index: number) => {
       if (rating === 0) {

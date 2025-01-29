@@ -5,9 +5,7 @@ import ProviderReviewsSlider from "@/components/ProviderReviewsSlider";
 import { Button } from "@/components/ui/button";
 import { providers, services } from "@/constants/data";
 import { imgs } from "@/constants/images";
-import { useGetProvidersQuery } from "@/lib/redux/features/apis/providers_api";
-import { useGetServicesByProviderIdQuery } from "@/lib/redux/features/apis/services_api";
-import { useGetUserQuery } from "@/lib/redux/features/apis/user_api";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useMemo, useState } from "react";
@@ -21,7 +19,6 @@ import {
 import { HiLocationMarker } from "react-icons/hi";
 import { IoMdCheckmark } from "react-icons/io";
 import { MdArrowForwardIos } from "react-icons/md";
-import { useGetReviewsByServiceIdQuery } from "@/lib/redux/features/apis/reviews_api";
 import NoServicesFound from "@/components/ui/NoServicesFound";
 import NoThingFound from "@/components/ui/NothingFound";
 import { useRouter } from "next/navigation";
@@ -35,16 +32,63 @@ interface pageProps {
 
 const Page: FC<pageProps>  = ({params:{providerId}}) => {
 
-  const providersData = useGetProvidersQuery();
-  const { data } = useGetServicesByProviderIdQuery(providerId);
-  const [serviceIndex, setServiceIndex] = useState(0);
-  const service = data?.data[serviceIndex];
-  const user = useGetUserQuery(providerId).data?.data;
-  const serviceReviews = useGetReviewsByServiceIdQuery(service?._id as string);
+  const user = {
+    avatar: "/images/default-avatar.png", // Path to a default user avatar
+    firstName: "Jane",
+    lastName: "Smith",
+  };
+  
+  const service = {
+    category: { name: "Cleaning Services" }, // Service category
+    name: "Premium House Cleaning", // Service name
+    verified: true, // Whether the service is verified
+    photos: ["/images/service1.jpg", "/images/service2.jpg"], // Sample service photos
+    state: "California", // Location of the service
+    ratedBy: 50, // Number of users who rated the service
+    ratings: 4.8, // Average rating of the service
+    desc: "Professional house cleaning with eco-friendly products.", // Description of the service
+    providerId: { _id: "provider123", name: "CleanCo Services" }, // Provider information
+  };
+  
+  const data = {
+    data: [
+      { _id: "service1", desc: "Gardening and Landscaping", price: 8000 },
+      { _id: "service2", desc: "Plumbing and Repairs", price: 4000 },
+      { _id: "service3", desc: "Electrical Maintenance", price: 6000 },
+    ],
+  };
+  
+  const providersData = {
+    data: [
+      { _id: "provider123", name: "CleanCo Services", location: "California" },
+      { _id: "provider124", name: "Green Thumb Experts", location: "Texas" },
+    ],
+    isSuccess: true,
+  };
+  
+  const reviews = [
+    {
+      user: "Michael Brown",
+      rating: 5,
+      comment: "Exceptional service! My house is spotless.",
+    },
+    {
+      user: "Emily Clark",
+      rating: 4,
+      comment: "Good service, but could improve on punctuality.",
+    },
+    {
+      user: "Sophia Williams",
+      rating: 5,
+      comment: "Highly recommended! Very professional and thorough.",
+    },
+  ];
+  
+ 
 
-  const otherServices = useMemo(() => {
-    return data?.data.filter((datum) => datum._id !== service?._id);
-  }, [data, service?._id]);
+  // const otherServices = useMemo(() => {
+  //   return data?.data.filter((datum) => datum._id !== service?._id);
+  // }, [data, service?._id]);
   
 
   const providers = useMemo(() => {
@@ -53,7 +97,7 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
     }
   }, [providerId, providersData.data, providersData.isSuccess]);
 
-  const reviews = serviceReviews.data?.data;
+  // const reviews = serviceReviews.data?.data;
   const {push} = useRouter();
   return (
     <main className="">
@@ -193,13 +237,13 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
             </div>
           </section>
 
-          {otherServices && otherServices.length > 0 ? (
+          {/* {otherServices && otherServices.length > 0 ? (
             <section className="flex flex-col py-4 gap-4  justify-start">
               <div className="text-2xl font-semibold">
                 Service Listing & Pricing
-              </div>
+              </div> */}
 
-              <div className="flex flex-col my-3 gap-4 justify-start sm:justify-between rounded-md bg-white px-4 py-6">
+              {/* <div className="flex flex-col my-3 gap-4 justify-start sm:justify-between rounded-md bg-white px-4 py-6">
                 {otherServices.map((otherService, idx) => {
                   return (
                     <div
@@ -226,10 +270,10 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
                     </div>
                   );
                 })}
-              </div>
-            </section>
-          ) : <NoThingFound message="There are no other services from this provider yet." />}
-          <ProviderReviewsSlider reviews={reviews} />
+              </div> */}
+            {/* </section>
+          ) : <NoThingFound message="There are no other services from this provider yet." />} */}
+          {/* <ProviderReviewsSlider reviews={reviews} /> */}
         </>):<NoThingFound message="No published services" />}
         </div>
         <div className="flex w-full flex-col gap-6 md:max-w-[50%] xl:max-w-[40%]">
@@ -248,7 +292,7 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
               Report
             </Button>
           </div>
-          <div className="flex py-10 px-8 bg-white xl:max-w-[90%] w-full flex-col gap-1 rounded-lg">
+          {/* <div className="flex py-10 px-8 bg-white xl:max-w-[90%] w-full flex-col gap-1 rounded-lg">
             <h3 className="text-2xl font-semibold">Service Availability</h3>{" "}
             {service &&
               service?.availability?.days.map((avail, idx) => {
@@ -279,7 +323,7 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
                 Book Service
               </button>)}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -291,11 +335,11 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
             Similar Providers
           </h1>
         </div>
-        <div className="flex flex-wrap justify-start gap-6 mt-8 lg:mt-10">
+        {/* <div className="flex flex-wrap justify-start gap-6 mt-8 lg:mt-10">
           {providers?.slice(0, 7).map((item) => {
             return <ProviderCard key={item._id} item={item} />;
           })}
-        </div>
+        </div> */}
       </section>):null}
     </main>
   );

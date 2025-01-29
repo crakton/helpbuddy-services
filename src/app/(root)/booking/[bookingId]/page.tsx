@@ -3,11 +3,6 @@
 import { NewsLetter } from "@/components/NewsLetter";
 import { Button } from "@/components/ui/button";
 import { imgs } from "@/constants/images";
-import { useBookServiceMutation } from "@/lib/redux/features/apis/bookings_api";
-import { useGetCategoryByIdQuery } from "@/lib/redux/features/apis/categories_api";
-import { useGetServiceByIdQuery } from "@/lib/redux/features/apis/services_api";
-import { useGetUserQuery } from "@/lib/redux/features/apis/user_api";
-import { Input } from "@/lib/utils/Input";
 import axios from "axios";
 import getSymbolFromCurrency from "currency-symbol-map";
 import Image from "next/image";
@@ -36,57 +31,71 @@ const BookingsPage: FC<pageProps> = ({ params: { bookingId } }) => {
     formState: { errors },
   } = useForm();
 
-  const { data } = useGetServiceByIdQuery(bookingId);
+  const service = {
+    price:3,
+    name:"",
+    ratedBy:"",
+    ratings:"",
+    state:"",
+    country:"",
 
-  const [makeBooking, bookingResponse] = useBookServiceMutation();
-  const service = data?.data;
-  const userRequest = useGetUserQuery(service?.providerId as string);
-  const categoryRequest = useGetCategoryByIdQuery(service?.category as string);
-  const category = categoryRequest.data?.data;
-  const provider = userRequest.data?.data;
-  const handleBooking = useCallback(async () => {
-    if (service) {
-      const payload = {
-        amount: service.price + 1000,
-        location: `${profile_data?.country}`,
-        serviceId: bookingId,
-      }
-      await makeBooking(payload);
+
+  }
+
+  const provider = {
+    email:"",
+    firstName:"",
+    lastName:"",
+    avatar:"",
+  }
+
+
+  const category = {
+    name:""
+  }
+  // const handleBooking = useCallback(async () => {
+  //   if (service) {
+  //     const payload = {
+  //       amount: service.price + 1000,
+  //       location: `${profile_data?.country}`,
+  //       serviceId: bookingId,
+  //     }
+  //     await makeBooking(payload);
       
-      if (bookingResponse.isError) {
-        toast.warn("Booking failed, try again!");
-      } else {
-        if (bookingResponse.isSuccess){
-          toast.info("Confirmed! Redirecting to payment");
-          const bookingData = bookingResponse.data?.data;
-          try {
-            const res = await axios.post<{
-              success: boolean;
-              message: string;
-              data: {
-                authorization_url: string;
-                access_code: string;
-                reference: string;
-              };
-            }>(
-              "/api/transactions/service?url=localhost:3000/bookings",
-              { bookingId: bookingData?._id },
-              {
-                headers: {
-                  Authorization: `Bearer ${Cookies.get("token")}`,
-                },
-              }
-            );
-            window.location.replace(res.data.data.authorization_url);
-          } catch (error) {
-            toast.warn("Payment failed");
-            router.replace("/bookings");
-          }
-        }
+  //     if (bookingResponse.isError) {
+  //       toast.warn("Booking failed, try again!");
+  //     } else {
+  //       if (bookingResponse.isSuccess){
+  //         toast.info("Confirmed! Redirecting to payment");
+  //         const bookingData = bookingResponse.data?.data;
+  //         try {
+  //           const res = await axios.post<{
+  //             success: boolean;
+  //             message: string;
+  //             data: {
+  //               authorization_url: string;
+  //               access_code: string;
+  //               reference: string;
+  //             };
+  //           }>(
+  //             "/api/transactions/service?url=localhost:3000/bookings",
+  //             { bookingId: bookingData?._id },
+  //             {
+  //               headers: {
+  //                 Authorization: `Bearer ${Cookies.get("token")}`,
+  //               },
+  //             }
+  //           );
+  //           window.location.replace(res.data.data.authorization_url);
+  //         } catch (error) {
+  //           toast.warn("Payment failed");
+  //           router.replace("/bookings");
+  //         }
+  //       }
       
-      }
-    }
-  }, [service, profile_data?.country, bookingId, makeBooking, bookingResponse.isError, bookingResponse.isSuccess, bookingResponse.data?.data, router]);
+  //     }
+  //   }
+  // }, [service, profile_data?.country, bookingId, makeBooking, bookingResponse.isError, bookingResponse.isSuccess, bookingResponse.data?.data, router]);
 
   return (
     <>
@@ -169,12 +178,12 @@ const BookingsPage: FC<pageProps> = ({ params: { bookingId } }) => {
         </div>
         <div className="flex justify-end">
           <Button
-            disabled={bookingResponse.isLoading}
+            // disabled={bookingResponse.isLoading}
             variant={"primary"}
             type="button"
-            onClick={handleBooking}
+            // onClick={"handleBooking"}
           >
-            {bookingResponse.isLoading && <Loader/>}
+            {/* {bookingResponse.isLoading && <Loader/>} */}
             Confirm service booking
           </Button>
         </div>

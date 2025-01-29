@@ -16,6 +16,7 @@ const nextConfig = {
     domains: [
       "afruna-bucket.nyc3.digitaloceanspaces.com",
       "nyc3.digitaloceanspaces.com",
+      "cloud.appwrite.io"
     ],
   },
 };

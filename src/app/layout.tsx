@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ReduxWrapper from "@/lib/providers/redux_wrapper";
+import { AuthProvider } from "@/context/UserContext";
 // import 'slick-carousel/slick/slick.css';
 // import 'slick-carousel/slick/slick-theme.css';
 
@@ -24,7 +25,10 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <AuthProvider>
+
         <ReduxWrapper>{children}</ReduxWrapper>
+        </AuthProvider>
       </body>
     </html>
   );
