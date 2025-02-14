@@ -91,7 +91,7 @@ const TestimonialSlider = () => {
         {/* {currentIndex > 0 && ( */}
         <button
           onClick={handlePrev}
-          className="text-afruna-gold border border-afruna-gold w-[2rem] h-[2rem] rounded-full flex justify-center items-center"
+          className="text-primaryGreen border border-primaryGreen w-[2rem] h-[2rem] rounded-full flex justify-center items-center"
         >
           <ArrowLeft size={16} />
           {/* &lt; */}
@@ -100,7 +100,7 @@ const TestimonialSlider = () => {
         {/* {currentIndex + testimonialsPerSlide < testimonialData.length && ( */}
         <button
           onClick={handleNext}
-          className=" text-afruna-gold border border-afruna-gold w-[2rem] h-[2rem] rounded-full flex justify-center items-center"
+          className=" text-primaryGreen border border-primaryGreen w-[2rem] h-[2rem] rounded-full flex justify-center items-center"
         >
           {/* &gt; */}
           <ArrowRight size={16} />

@@ -36,12 +36,12 @@ export const useRoute = () => {
         active: pathname === "/review",
         href: "/review",
       },
-      {
-        title: "Chat",
-        icon: BsFillChatLeftTextFill,
-        active: pathname === "/chat" || !!conversationId,
-        href: "/chat",
-      },
+      // {
+      //   title: "Chat",
+      //   icon: BsFillChatLeftTextFill,
+      //   active: pathname === "/chat" || !!conversationId,
+      //   href: "/chat",
+      // },
     ],
     [pathname, conversationId]
   );

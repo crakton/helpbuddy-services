@@ -20,7 +20,7 @@ export interface IBooking {
         to: string;
       };
     };
-    photos: string[];
+    photos: [];
     licenseAndCertification: [];
     insuranceCoverage: [];
     publish: boolean;

@@ -22,10 +22,10 @@ const Footer: FC<FooterProps> = ({}) => {
     <footer className='flex flex-col'>
       <div className="pt-8 bg-[#FCF5E5] grid grid-cols-9 gap-2 md:gap-4 text-afruna-blue">
         <div className="col-span-full md:col-span-3">
-          <div className="flex p-5 md:p-10 flex-col gap-6 justify-center items-center ">
-            <Image src={imgs.footerLogo} alt="Afruna Logo" className="md:w-52" />
+          <div className="flex p-1 md:p-10 flex-col gap-6 justify-center items-center ">
+            <Image src={imgs.footerLogo} alt="Afruna Logo" className="md:w-52 w-48" />
             <p className="text-xs">App comming soon...</p>
-            <div className="flex flex-row justify-between items-center space-x-1">
+            <div className="flex flex-row justify-between items-center space-x-1"> 
               <StoreBtn
                 iconComponent={<FaAppStore size={27} />}
                 title={"App Store"}
@@ -44,17 +44,15 @@ const Footer: FC<FooterProps> = ({}) => {
             <h3 className="font-bold my-1">About</h3>
             <div className="flex flex-col space-y-2">
               <Link href={""}>About us</Link>
-              <Link href={""}>Contact us</Link>
-              <Link href={""}>Career</Link>
+              <Link href={"/contacts"}>Contact us</Link>
             </div>
           </div>
           <div className="text-xs col-span-1">
             <h3 className="font-bold my-1">Privacy</h3>
             <div className="flex flex-col space-y-2">
               <Link href={""}>About us</Link>
-              <Link href={""}>Find store</Link>
-              <Link href={""}>Categories</Link>
-              <Link href={""}>Blogs</Link>
+              <Link href={""}>Find services</Link>
+              <Link href={""}>service Catlogue</Link>
             </div>
           </div>
           <div className="text-xs col-span-1">
@@ -62,19 +60,16 @@ const Footer: FC<FooterProps> = ({}) => {
             <div className="flex flex-col space-y-2">
               <Link href={""}>Help center</Link>
               <Link href={""}>Money Refund</Link>
-              <Link href={""}>Shipping</Link>
-              <Link href={""}>Partnership</Link>
+              <Link href={"/authentication"}>Partnership</Link>
               <Link href={""}>F&Q</Link>
             </div>
           </div>
           <div className="text-xs col-span-1">
             <h3 className="font-bold my-1">For users</h3>
             <div className="flex flex-col space-y-2">
-              <Link href={""}>Login</Link>
-              <Link href={""}>Register</Link>
-              <Link href={""}>Settings</Link>
-              <Link href={""}>Sell on Afruna</Link>
-              <Link href={""}>My Orders</Link>
+              <Link href={"/authentication"}>Login</Link>
+              <Link href={"/authentication"}>Register</Link>
+              <Link href={"/profile"}>Settings</Link>
             </div>
           </div>
         </div>

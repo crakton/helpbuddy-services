@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    BASE_URL: "https://afruna-backend-cmsxg.ondigitalocean.app/api/v1",
+   
+
+
   },
   async rewrites() {
     return [

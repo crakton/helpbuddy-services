@@ -1,10 +1,7 @@
 export interface ICategory {
-  _id: string;
   name: string;
-  children: [];
+  sub_categories: [];
   options: [];
-  parent: string|null;
-  icon:string;
 }
 
 export interface ICategoryResponse {

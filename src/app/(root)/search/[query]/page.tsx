@@ -1,10 +1,21 @@
 "use client"
+import { ProviderCard } from "@/components/ProviderCard";
+import SearchBar from "@/components/searchComponent";
+import ServicesCard from "@/components/ServicesCard";
+import { providers, services } from "@/constants/data";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-const SearchResultsPage = ({ providers, services }) => {
+
+type SearchProps = {
+
+ filtered:[],
+  query:string
+}
+
+const SearchResultsPage: FC<SearchProps> = () => {
   const { query } = useParams(); // Use useParams to access query param
-  console.log(useParams())
   const [filteredResults, setFilteredResults] = useState([]);
 
   useEffect(() => {
@@ -19,23 +30,23 @@ const SearchResultsPage = ({ providers, services }) => {
     }
   }, [query, providers, services]);
 
+
+  console.log(filteredResults)
+
   return (
     <div className="p-4 bg-white shadow rounded-xl">
+      <SearchBar />
       <h2 className="text-2xl font-semibold mb-4">Search Results for "{query}"</h2>
-      <ul className="space-y-3">
+      <ul className="space-y-3 flex gap-5 flex-wrap  shrink-0">
         {filteredResults.map((item) => (
-          <li key={item.$id} className="p-2 border rounded-md">
-            <h3 className="font-semibold">{item.name}</h3>
-            <p className="text-sm text-gray-500">
-              {item.serviceCategory || "N/A"} - {item.location}
-            </p>
-            <p className="text-sm">⭐ {item.rating || "No Ratings"}</p>
-          </li>
+          
+          <ProviderCard item={item} />
         ))}
       </ul>
     </div>
   );
 };
+
 
 
 export default SearchResultsPage;

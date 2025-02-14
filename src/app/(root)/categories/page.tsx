@@ -1,5 +1,6 @@
 "use client";
 import CategoryCard from "@/components/CategoryCard";
+import { categories } from "@/constants/data";
 import { FC, useState } from "react";
 
 interface pageProps {}
@@ -22,8 +23,8 @@ const Page: FC<pageProps> = ({}) => {
         </div>
       </section>
       <section className="px-8 lg:px-20 pb-10 md:pb-16 flex flex-wrap sm:justify-center mt-12 gap-6 md:gap-8 lg:mt-10 ">
-        {data?.data.map((item) => {
-          return <CategoryCard key={item._id} item={item} />
+        {categories.map((item,index) => {
+          return <CategoryCard key={index} item={item} />
         })}
       </section>
       {/* <NewsLetter/> */}

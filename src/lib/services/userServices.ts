@@ -7,19 +7,21 @@ interface IUserInfo {
 }
 
 // Function to get env variables safely
-const getEnv = (key: string): string => process.env[key] || '';
+const getEnv = (key: string): string => process.env[`NEXT_PUBLIC_${key}`] || '';
 
 // Function to check if the user exists
 const checkIfUserExists = async (userId: string) => {
   try {
-    await databases.getDocument(
+    const response = await databases.listDocuments(
       getEnv('APPWRITE_DATABASE_ID'),
       getEnv('APPWRITE_COLLECTION_ID'),
-      userId
+      [`equal("userId", "${userId}")`] // Query userId field
     );
-    return true; // Document exists
+
+    return response.total > 0;
   } catch (error) {
-    return false; // Document doesn't exist
+    console.error("Error checking user existence:", error);
+    return false;
   }
 };
 
@@ -29,7 +31,7 @@ const createUserDocument = async (userId: string, fileUrl: string) => {
     const response = await databases.createDocument(
       getEnv('APPWRITE_DATABASE_ID'),
       getEnv('APPWRITE_COLLECTION_ID'),
-      ID.unique(),
+      userId, // Use userId as document ID
       { profilePicture: fileUrl, userId },
       [Permission.read(Role.any())]
     );
@@ -37,7 +39,7 @@ const createUserDocument = async (userId: string, fileUrl: string) => {
     return response;
   } catch (error) {
     console.error('Failed to create user document:', error);
-    toast.warn("Failed to create user document.");
+    await toast.warn("Failed to create user document.");
   }
 };
 
@@ -46,7 +48,7 @@ export const updateUserProfile = async ({ userId, fileUrl }: IUserInfo) => {
   try {
     const userExists = await checkIfUserExists(userId);
     if (!userExists) {
-      toast.warn("User document not found! Creating a new one...");
+      await toast.warn("User document not found! Creating a new one...");
       return await createUserDocument(userId, fileUrl);
     }
 
@@ -61,7 +63,7 @@ export const updateUserProfile = async ({ userId, fileUrl }: IUserInfo) => {
     return response;
   } catch (error) {
     console.error('Failed to update user profile:', error);
-    toast.warn("Failed to update profile picture.");
+    await toast.warn("Failed to update profile picture.");
   }
 };
 
@@ -74,16 +76,17 @@ export const handleImageUpload = async (files: File[], userId: string) => {
       const uploadedFile = await storage.createFile(
         getEnv('APPWRITE_BUCKET_ID'),
         ID.unique(),
-        file
+        file,
+        [Permission.read(Role.any())] // Set public read permissions
       );
 
       const fileUrl = `${getEnv('APPWRITE_ENDPOINT')}/storage/buckets/${getEnv('APPWRITE_BUCKET_ID')}/files/${uploadedFile.$id}/view`;
 
       await updateUserProfile({ userId, fileUrl });
 
-      toast.info("Avatar uploaded successfully!");
+      await toast.info("Avatar uploaded successfully!");
     } catch (error) {
-      toast.warn("Avatar uploading failed");
+      await toast.warn("Avatar uploading failed");
       console.error("Error during avatar upload:", error);
     }
   }

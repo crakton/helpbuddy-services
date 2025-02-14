@@ -139,8 +139,6 @@ const ContactPage: FC<pageProps> = ({}) => {
           </div>
         </section>
       </div>
-      {/* Newsletter */}
-      <NewsLetter />
     </main>
   );
 };

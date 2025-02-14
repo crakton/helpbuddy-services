@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { providers, services } from "@/constants/data";
 import { imgs } from "@/constants/images";
 
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { FC, useMemo, useState } from "react";
 import getSymbolFromCurrency from "currency-symbol-map";
@@ -22,6 +22,9 @@ import { MdArrowForwardIos } from "react-icons/md";
 import NoServicesFound from "@/components/ui/NoServicesFound";
 import NoThingFound from "@/components/ui/NothingFound";
 import { useRouter } from "next/navigation";
+import Location from "@/components/Location";
+import { IoReorderThree } from "react-icons/io5";
+import ServicesCard from "@/components/ServicesCard";
 
 interface pageProps {
   params: {
@@ -37,11 +40,13 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
     firstName: "Jane",
     lastName: "Smith",
   };
+
+  const [favourite,setFavourite] = useState(false)
   
   const service = {
     category: { name: "Cleaning Services" }, // Service category
     name: "Premium House Cleaning", // Service name
-    verified: true, // Whether the service is verified
+    verified: false, // Whether the service is verified
     photos: ["/images/service1.jpg", "/images/service2.jpg"], // Sample service photos
     state: "California", // Location of the service
     ratedBy: 50, // Number of users who rated the service
@@ -118,7 +123,7 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
               <div className="flex justify-center items-center">
                 <div className="w-[7.5rem] h-[7.5rem] overflow-hidden relative">
                   <Image
-                    src={user?.avatar ?? imgs.prodeatimg}
+                    src={imgs.prodeatimg}
                     alt="detail-img"
                     priority
                     fill
@@ -163,7 +168,7 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
             <div className="flex flex-col gap-3 mt-2 justify-start items-start">
               <p className="text-sm">{service?.desc}</p>
               <Button disabled={service?.providerId._id === null && true} onClick={()=> {
-                push("/chat/"+service?.providerId._id)
+                console.log("Linux")
               }} variant={"afrunaOutline"} className="">
                 <BsFillChatLeftTextFill className="text-[1rem] mr-2 sm:text-[1.1rem]" />
                 Contact me
@@ -171,10 +176,13 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
             </div>
           </section>
 
+
+          <Location address={"ATBU, Bauchi"} />
+
         {/* === services section */}
         {/* if there is a services display it relation */}
         {service !== undefined? (<>
-          {service && service.photos.length > 0 ? <GallerySlider photos={service.photos} /> : null}
+          {service && service.photos.length > 0 ? <GallerySlider photos={[imgs.disSer3,imgs.cam2]} /> : null}
           <section className="flex mt-12 flex-col py-4 gap-4 justify-start">
             <h2 className="text-2xl font-semibold text-start flex justify-self-start">
               Service Details
@@ -278,9 +286,13 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
         </div>
         <div className="flex w-full flex-col gap-6 md:max-w-[50%] xl:max-w-[40%]">
           <div className="flex gap-3 justify-start items-center">
-            <Button variant={"whiteAfrunaButton"} className="text-xs ">
+            <Button onClick={()=>{
+
+              setFavourite((prev)=>!prev)
+
+            }} variant={"whiteAfrunaButton"} className="text-xs">
               {" "}
-              <BsHeartFill className="mr-1 text-[#A7B7DD]" />
+              <BsHeartFill  className={`mr-1 ${favourite?"text-red-700":"text-[#A7B7DD]"} `} />
               Favourite
             </Button>
             <Button variant={"whiteAfrunaButton"} className="text-xs">
@@ -330,17 +342,29 @@ const Page: FC<pageProps>  = ({params:{providerId}}) => {
     {/* list other providers */}
     {providers !== undefined?(  <section className="flex flex-col gap-2 px-4 lg:px-32 pt-12 w-full pb-16">
         <div className="flex flex-col gap-2">
-          <h3 className=" text-orange-400 text">SERVICES</h3>
-          <h1 className="flex text-3xl font-extrabold text-afruna-blue">
+          <h3 className=" text-primaryGreen text">Services By Provider</h3>
+
+        
+        </div>
+        {services && services.length > 0 ? (
+        <section className="flex flex-col lg:px-8 xl:px-20 lg:pb-12 px-4">
+          <div className="flex flex-wrap sm:justify-center gap-4 mt-8 ">
+            {services.map((item) => (
+              <ServicesCard key={item.$id} item={item} />
+            ))}
+          </div>
+
+        
+        </section>
+      ) : <NoServicesFound />}
+
+
+      </section>):null}
+      <div>
+      <h1 className="flex text-3xl font-extrabold text-afruna-blue">
             Similar Providers
           </h1>
-        </div>
-        {/* <div className="flex flex-wrap justify-start gap-6 mt-8 lg:mt-10">
-          {providers?.slice(0, 7).map((item) => {
-            return <ProviderCard key={item._id} item={item} />;
-          })}
-        </div> */}
-      </section>):null}
+      </div>
     </main>
   );
 };

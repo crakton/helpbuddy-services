@@ -1,16 +1,9 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import authService from "@/lib/services/authServices";
-import { RegisterParams, LoginParams } from "@/types/indext";
+import { RegisterParams, LoginParams, User } from "@/types/indext";
+import bookingServices from "../lib/services/bookingServices"
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  phoneNumber?: string;
-  countryOfResidence?: string;
-  role?: string;
-}
 
 interface AuthContextProps {
   user: User | null;
@@ -24,14 +17,36 @@ interface AuthContextProps {
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Fetch user details from Appwrite account and database
+
+  const data = {
+    userID:user?.id,
+    photos: ["photo1.jpg", "photo2.jpg"],
+    name: "Booking Name",
+    status: "Confirmed",
+    createdAt: new Date().toISOString(),
+    amount: "100.00",
+    location: "Lagos",
+    provider: "Amina Bello",
+    providerId: JSON.stringify({ // Store providerId as JSON string
+        name: "Amina Bello",
+        email: "amina@example.com",
+        rating: 4.5,
+        avatar: "https://example.com/avatar.jpg",
+        location: "Lagos",
+        contact: "+2348000000006",
+        createdAt: new Date().toISOString(),
+    }),
+};
+
   const fetchUser = async () => {
     setLoading(true);
+    bookingServices.createBooking(data)
+    bookingServices.getBookings()
     try {
       const userData = await authService.getUser(); // Assuming getUser now returns user with preferences
       if (userData) {
@@ -42,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           phoneNumber: userData.prefs.phoneNumber || "",
           countryOfResidence: userData.prefs.countryOfResidence || "",
           role: userData.prefs.role || "",
-          profilePicture:userData.profilePicture|| ""
+          profilePicture:userData?.profilePicture|| ""
         });
       }
     } catch (error) {

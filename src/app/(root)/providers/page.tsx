@@ -19,14 +19,13 @@ const Page: FC<pageProps> = ({}) => {
         </div>
       </section>
       <section className="px-8 lg:px-28 pb-10 md:pb-16 flex flex-wrap sm:justify-center mt-12 gap-6 md:gap-8 lg:mt-10 ">
-        {/* {data && data.length
-          ? data.slice(0, 12).map((item) => {
-              return <ProviderCard key={item._id} item={item} />;
+        {providers.slice(0, 12).map((item) => {
+              return <ProviderCard key={item.name} item={item} />;
             })
-          : null} */}
+          }
       </section>
       {/* newsletter */}
-    {/*   <NewsLetter /> */}
+      {/* <NewsLetter /> */}
     </>
   );
 };

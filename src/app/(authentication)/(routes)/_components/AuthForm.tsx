@@ -22,10 +22,13 @@ import ItemPicker from "@/components/ItemPicker";
 import Auth from "@/lib/services/authServices";
 
 import authService from "@/lib/services/authServices";
+import { LoginParams, RegisterParams } from "@/types/indext";
 
 interface AuthFormProps {}
 
 type Variant = "LOGIN" | "REGISTER";
+
+
 const AuthForm: FC<AuthFormProps> = ({}) => {
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [agreed, setAgreed] = useState(false);
@@ -44,6 +47,8 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
     Code: "",
     Name: "",
   }); 
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   
   //returns as {Name: "Nigeria", Code: "NG"}
   // const validation = usePhoneValidation(phone);
@@ -77,7 +82,7 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
       lastName: "",
       email: "",
       password: "",
-      phoneNumber:phone,
+      phone:phone,
       countryOfResidence:country
       
     
@@ -87,7 +92,7 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
   const router = useRouter();
 
 
-  const onRegister: SubmitHandler<FieldValues> = async (data) => {
+  const onRegister = async (data:RegisterParams) => {
     const formData = {
       ...data,
       phoneNumber: phone,  // Explicitly add the phone state value
@@ -96,18 +101,25 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
     };
   
     console.log(formData);
+
+    setIsLoading(true)
   
     try {
       await authService.register(formData);
       toast.success("Registration successful! Redirecting...");
+      
       router.push(role === "Service Provider" ? "/" : "/booking/1");
+    
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Registration failed!");
+      setIsLoading(false);
     }
   };
   
-  const onLogin: SubmitHandler<FieldValues> = async (data) => {
+  const onLogin = async (data:LoginParams) => {
     console.log(data)
+
+   setIsLoading(true);
     try {
 
 
@@ -116,12 +128,14 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
       if (user.role !== role) {
         toast.error(`Access denied. You are registered as a ${user.role}`);
         return;
+        setIsLoading(false)
       }
 
       toast.success("Login successful! Redirecting...");
       router.push(role === "Service Provider" ? "/provider-dashboard" : "/employer-dashboard");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Login failed!");
+      setIsLoading(false)
     }
   };
 
@@ -151,7 +165,7 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
         {variant === "LOGIN" ? "User Login" : "User Register"}
       </h1>
       <form
-        onSubmit={handleSubmit(variant === "REGISTER" ? onRegister : onLogin)}
+        onSubmit={handleSubmit(variant==="REGISTER" ? onRegister : onLogin)}
         
         className={clsx(
           `max-w-[90%] w-full flex flex-col items-center mx-auto rounded-2xl shadow-md p-6 sm:pt-8 md:p-10
@@ -377,17 +391,16 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
             // disabled={!agreed && opt.isLoading}
             className={`h-10 font-semibold text-white  rounded-md my-6 w-full gap-2`}
           >
-            {variant === "REGISTER" && (
-              <Loader2 className=" h-6 w-6 text-black animate-spin" />
-            )}
-            {variant === "LOGIN" && login && (
-              <Loader2 className=" h-6 w-6 text-black animate-spin" />
-            )}
-            {variant === "REGISTER" ? (
-              <span>Sign up</span>
+            {isLoading?
+              <Loader2 className=" h-6 w-6 text-black animate-spin" />: variant == "REGISTER"?
+    <p>Sign Up</p>:""
+            }
+            {!isLoading && variant=="LOGIN"? <p>Login</p>:""}
+            {/* {variant === "REGISTER" ? (
+             ""
             ) : (
               <span>Log in</span>
-            )}
+            )} */}
           </Button>
 
           <div className="relative mb-6">

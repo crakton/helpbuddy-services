@@ -60,7 +60,7 @@ const AllServicesModel: FC<AllServicesModelProps> = ({}) => {
   // console.log(catalogs);
 
   return (
-    <main className="fixed z-40 bg-white top-24 bottom-0 left-0 right-0">
+    <main className="fixed z-50 bg-white top-24 bottom-0 left-0 right-0">
       <div className="w-full h-full flex justify-center items-center flex-wrap gap-x-8 gap-y-4 px-6 lg:px-40 py-8 overflow-y-auto ">
         <h1 className="text-center text-3xl font-sans text-afruna-blue border-b p-3">
           Services Cataloging
@@ -82,7 +82,7 @@ const AllServicesModel: FC<AllServicesModelProps> = ({}) => {
               </div>
             );
           })}
-        {/* {allservices.map(({ name, services }, index) => {
+        {allservices.map(({ name, services }, index) => {
           return (
             <div key={index} className="flex max-w-[14rem] w-full flex-col justify-start items-start">
               <h2 className="text-sm font-bold">{name}</h2>
@@ -91,7 +91,7 @@ const AllServicesModel: FC<AllServicesModelProps> = ({}) => {
               })}
             </div>
           );
-        })} */}
+        })}
       </div>
     </main>
   );

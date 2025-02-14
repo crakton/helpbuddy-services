@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { FC,useState,useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,7 @@ const AccountSideBar: FC<AccountSideBarProps> = ({}) => {
 
   return (
     <>
-    <aside className="w-full bg-white m-3 rounded-lg max-w-[10rem] z-50 px-1 pt-3 hidden md:flex flex-col gap-6">
+    <aside className="w-full bg-white m-3 rounded-lg max-w-[10rem]  px-1 pt-3 hidden md:flex flex-col gap-6">
       {accountRoutes.map(({ active, href, title, icon:Icon }) => {
         return (
           <Link

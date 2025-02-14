@@ -19,7 +19,7 @@ const buttonVariants = cva(
         afrunaOutline:
           "font-semibold border border-sky-400 bg-white text-sky-500",
          yellowOutlineButton:
-          "border border-orange-400 bg-white text-orange-400 hover: hover:",
+          "border border-primaryGreen bg-white text-primaryGreen hover: hover:",
          skyButton:
           "text-sky-500 bg-sky-100  hover:bg-gradient-to-br hover:from-sky-50 hover:to-sky-200 transition duration-500",
         primary:
@@ -28,7 +28,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         whiteAfrunaButton: "bg-white text-afruna-blue",
-        link: "text-orange-400 underline-offset-4 hover:underline",
+        link: "text-primaryGreen underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

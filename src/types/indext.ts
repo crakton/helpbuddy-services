@@ -11,10 +11,19 @@ export type RegisterParams = {
     firstName: string;
     lastName: string;
     email: string;
-    phoneNumber: string;
+    phone: string;
     countryOfResidence: string;
     password: string;
-    confirmPassword: string;
     role: string;
   };
 
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  countryOfResidence?: string;
+  role?: string;
+  profilePicture?: string;
+}

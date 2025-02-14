@@ -12,12 +12,15 @@ export interface IService {
   rating: string;
   price: string;
 }
+
 export interface IProvider {
-  img1: StaticImageData;
-  services: string;
-  name: string;
-  rating: string;
+  $id: string; 
+  imageUrl: StaticImageData | string; 
+  name: string; 
+  serviceCategory: string; 
+  rating: number; 
 }
+
 export interface ICategories {
   img: StaticImageData;
   text: string;

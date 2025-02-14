@@ -1,10 +1,12 @@
 import { imgs } from "@/constants/images";
 import Image, { StaticImageData } from "next/image";
 import { FC } from "react";
-import { HiLocationMarker } from "react-icons/hi";
+import { HiLocationMarker, HiOutlineSearch, HiSearch } from "react-icons/hi";
 import { Button } from "./ui/button";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { afrunaPartner } from "@/constants/data";
+import { afrunaPartner, providers, services } from "@/constants/data";
+import SearchComponent from "./searchComponent";
+import Link from "next/link";
 
 interface LandingbannarProps {}
 
@@ -86,19 +88,23 @@ const Landingbannar: FC<LandingbannarProps> = ({}) => {
           </div>
         </div>
         <div className="hidden w-full max-w-[53%] md:flex gap-2 p-2 items-center justify-center text-xs font-medium shadow shadow-orange-100 mt-16 rounded-lg border border-[#BBBBBB]">
-          <div className="border-r flex items-center justify-center border-orange-200 px-2 h-full">
+          <div className="border-r gap-5 flex items-center justify-center border-aruna-blue px-2 h-full">
+            <HiOutlineSearch className="text-primaryGreen" size={25} />
             <span>What are you looking for?</span>
           </div>
-          <div className="flex gap-2 px-2 items-center justify-center pr-10  border-r border-orange-200 h-full">
-            <HiLocationMarker className="text-orange-400 text-2xl" /> Country
+          <div className="flex gap-2 px-2 items-center justify-center pr-10  border-r border-aruna-blue h-full">
+            <HiLocationMarker className="text-primaryGreen text-2xl" /> Country
           </div>
-          <div className="flex gap-2 items-center justify-center border-r pr-10 border-orange-200 px-2 h-full">
-            <HiLocationMarker className="text-orange-400 text-2xl" /> State of
+          <div className="flex gap-2 items-center justify-center border-r pr-10 border-aruna-blue px-2 h-full">
+            <HiLocationMarker className="text-primaryGreen text-2xl" /> State of
             Province
           </div>
-          <Button variant={"primary"} className=" h-12 rounded-xl ml-2">
-            Search Now <MdOutlineKeyboardArrowRight className="text-2xl " />
-          </Button>
+
+          <Link href={"/around-me"} className="flex gap-5 items-center ">
+          <HiLocationMarker className="text-primaryGreen text-2xl" /> 
+
+            Service Providers Around You?
+          </Link>
         </div>
         <div className=" hidden lg:flex flex-col w-full mt-36 gap-2 max-w-[85%]">
           <h3 className=" text-neutral-500 text-xl">Our Partners</h3>
@@ -121,15 +127,15 @@ const Landingbannar: FC<LandingbannarProps> = ({}) => {
           </div>
         </div>
       </div>
-      <div className="lg:hidden flex flex-col text-xl shadow-lg shadow-orange-100 px-2 mt-8 max-w-[90%] mx-auto rounded-lg border border-[#BBBBBB]">
-        <div className="py-6 px-4 border-b border-orange-200">
+      <div className="lg:hidden flex flex-col text-xl shadow-lg shadow-primaryGreen px-2 mt-8 max-w-[90%] mx-auto rounded-lg border border-[#BBBBBB]">
+        <div className="py-6 px-4 border-b border-aruna-blue">
           What are you looking for?
         </div>
-        <div className="flex gap-3 items-center py-6 px-4 border-b border-orange-200">
-          <HiLocationMarker className="text-orange-400 text-3xl" /> Country
+        <div className="flex gap-3 items-center py-6 px-4 border-b border-aruna-blue">
+          <HiLocationMarker className="text-primaryGreen text-3xl" /> Country
         </div>
-        <div className="flex gap-3 items-center py-6 px-4 border-b border-orange-200">
-          <HiLocationMarker className="text-orange-400 text-3xl" /> State of
+        <div className="flex gap-3 items-center py-6 px-4 border-b border-aruna-blue">
+          <HiLocationMarker className="text-primaryGreen text-3xl" /> State of
           Province
         </div>
         <div className="flex gap-3 items-center p-4">

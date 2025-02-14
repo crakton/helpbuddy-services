@@ -3,32 +3,22 @@
 import { FC, memo, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  MdHelp,
-  MdMenu,
   MdOutlineLogin,
   MdOutlineLogout,
-  MdOutlineQrCodeScanner,
-  MdSearch,
-  MdShoppingCart,
-  MdSupportAgent,
 } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import { IoIosNotifications, IoMdMenu } from "react-icons/io";
 import Link from "next/link";
 import Image from "next/image";
-// import { ItemPicker } from "@/lib";
 import { imgs } from "@/constants/images";
-import Heading from "@/app/(root)/_components/heading";
 import { FaUser } from "react-icons/fa";
-import { BsFillChatLeftTextFill, BsHeartFill } from "react-icons/bs";
+import { BsHeartFill } from "react-icons/bs";
 import { ItemPicker } from "@/lib/utils/ItemPicker";
 import { AiFillAccountBook } from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
 import AllServicesModel from "@/components/AllServicesModel";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { profile } from "console";
 import { verifyImageUrl } from "@/utils/verify_image_url";
-import { setProfile } from "@/lib/redux/features/slices/profileSlice";
 import { useAuth } from "@/context/UserContext";
 
 interface MainHeaderProps {}
@@ -71,7 +61,7 @@ console.log(user?.profilePicture)
   const [show, setShow] = useState<boolean>(false);
   return (
     <header className="sticky top-0 bg-gradient-to-r from-[#2a2c79] to-[#399878] z-30">
-      <nav className="max-w-[97%] md:max-w-[95%] w-full flex justify-between items-center mx-auto p-6 lg:max-w-[90%]">
+      <nav className="max-w-[97%] md:max-w-[95%] w-full flex justify-between items-center mx-auto py-3 lg:max-w-[90%]">
         <div className="flex justify-between items-center gap-2 md:gap-0 sm:max-w-[60%] sm:w-full md:w-fit">
           {!sideNavOpen ? (
             <IoMdMenu
@@ -119,6 +109,12 @@ console.log(user?.profilePicture)
               className="hover:scale-95 duration-300 text-xs xl:text-sm"
             >
               Service Provider
+            </Link>
+            <Link
+              href={"/services"}
+              className="hover:scale-95 duration-300 text-xs xl:text-sm"
+            >
+              Services
             </Link>
             <Link
               href={"/contact"}
