@@ -8,7 +8,7 @@ import TestimonialSlider from "@/components/TestimonialSlider";
 import SearchBar from "@/components/searchComponent";
 import NoThingFound from "@/components/ui/NothingFound";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { userMethods, providers, services, providerMethods } from "@/constants/data";
+import { userMethods, providers, services, providerMethods, categories } from "@/constants/data";
 import { imgs } from "@/constants/images";
 
 import Image from "next/image";
@@ -53,12 +53,11 @@ export default function Home() {
           Featured Categories
         </h1>
         <p className="text-afruna-gray md:mt-2">What services do you need?</p>
-        {/* <div className="flex flex-row flex-wrap sm:justify-center gap-6 md:gap-8 mt-8 lg:mt-10 ">
-          {isSuccess &&
-            data?.data.map((item) => {
-              return <CategoryCard key={item._id} item={item} />;
+        <div className="flex flex-row flex-wrap sm:justify-center gap-6 md:gap-8 mt-8 lg:mt-10 ">
+          {categories.slice(0,5).map((item,index) => {
+              return <CategoryCard key={index} item={item} />;
             })}
-        </div> */}
+        </div>
         <div className="my-4 md:flex justify-end">
           <Link
             href={"/categories"}
@@ -83,7 +82,7 @@ export default function Home() {
           
             <div className="flex justify-start items-center lg:mt-2 max-w-[80%] lg:max-w-fit gap-1 bg-white rounded-full">
               <Button
-                variant={`${instructions?"white":"primary"}`}
+                variant={`${instructions?"whiteButton":"primary"}`}
                 className=" w-full rounded-full max-w-[8rem] lg:px-16"
                 onClick={()=>setInstructions(false)}
               >
@@ -91,7 +90,7 @@ export default function Home() {
               </Button>
               <Button
               onClick={()=>setInstructions(true)}
-              variant={`${instructions?"primary":"white"}`} className=" rounded-full">
+              variant={`${instructions?"primary":"whiteButton"}`} className=" rounded-full">
                 Service Provider
               </Button>
             </div>

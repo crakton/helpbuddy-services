@@ -2,7 +2,10 @@
 const nextConfig = {
   env: {
    
-
+    APPWRITE_ENDPOINT:process.env.APPWRITE_ENDPOINT,
+    APPWRITE_API_KEY:process.env.APPWRITE_API_KEY,
+    APPWRITE_PROJECT_ID:process.env.APPWRITE_PROJECT_ID,
+    APPWRITE_DATABASE_ID :process.env.APPWRITE_DATABASE_ID
 
   },
   async rewrites() {

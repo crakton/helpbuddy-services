@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import authService from "@/lib/services/authServices";
 import { RegisterParams, LoginParams, User } from "@/types/indext";
 import bookingServices from "../lib/services/bookingServices"
+import { getServices } from "@/lib/services/serviceServices";
 
 
 interface AuthContextProps {
@@ -23,32 +24,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Fetch user details from Appwrite account and database
 
-  const data = {
-    userID:user?.id,
-    photos: ["photo1.jpg", "photo2.jpg"],
-    name: "Booking Name",
-    status: "Confirmed",
-    createdAt: new Date().toISOString(),
-    amount: "100.00",
-    location: "Lagos",
-    provider: "Amina Bello",
-    providerId: JSON.stringify({ // Store providerId as JSON string
-        name: "Amina Bello",
-        email: "amina@example.com",
-        rating: 4.5,
-        avatar: "https://example.com/avatar.jpg",
-        location: "Lagos",
-        contact: "+2348000000006",
-        createdAt: new Date().toISOString(),
-    }),
-};
-
   const fetchUser = async () => {
     setLoading(true);
-    bookingServices.createBooking(data)
-    bookingServices.getBookings()
+   
     try {
-      const userData = await authService.getUser(); // Assuming getUser now returns user with preferences
+      const userData = await authService.getUser(); 
       if (userData) {
         setUser({
           id: userData.$id,
@@ -57,7 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           phoneNumber: userData.prefs.phoneNumber || "",
           countryOfResidence: userData.prefs.countryOfResidence || "",
           role: userData.prefs.role || "",
-          profilePicture:userData?.profilePicture|| ""
         });
       }
     } catch (error) {
@@ -68,6 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     fetchUser();
+
   }, []);
 
   // Register user and update state
@@ -95,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Update user preferences and state
-  const updatePreferences = async (data: Partial<User>) => {
+  const updatePreferences = async (data:any) => {
     await authService.updatePreferences(data);
     await fetchUser();
   };

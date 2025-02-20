@@ -2,22 +2,12 @@ import { toast } from "react-toastify";
 import { account, databases, ID } from "../../../appwrite";
 import { LoginParams, RegisterParams } from "@/types/indext";
 import { OAuthProvider, Query } from "appwrite";
+import { COLLECTION_IDS } from "../../../appwrite.config";
 
-const getEnv = (key: string): string => {
-  const value = process.env[key] || process.env[`NEXT_PUBLIC${key}`];
 
-  if (!value) {
-    console.warn(`⚠️ Missing environment variable: ${key}`);
-    console.log(
-      "Available environment variables:",
-      "All here ",
-      JSON.stringify(process.env, null, 2)
-    );
-    return "";
-  }
+    const databaseId = process.env.APPWRITE_DATABASE_ID as string
 
-  return value.trim();
-};
+
 
 class AuthService {
   async verifyEmail(userId: string) {
@@ -33,8 +23,8 @@ class AuthService {
 
   //  User REgistration
   async register({
-    firstName,
-    lastName,
+    fullName,
+    address,
     email,
     phone,
     countryOfResidence,
@@ -48,38 +38,41 @@ class AuthService {
         ID.unique(),
         email,
         password,
-        `${firstName} ${lastName}`
+        `${fullName}`
       );
       console.log("✅ User registered successfully:", user);
 
+      await this.updatePreferences({ countryOfResidence, role,address });
       // ✅ Log in user automatically
       await this.verifyEmail(user.$id)
       await this.login({ email, password });
 
       // ✅ Update user preferences
-      await this.updatePreferences({ countryOfResidence, role });
 
-      // ✅ Store user in Appwrite database
-      const databaseId = getEnv("APPWRITE_DATABASE_ID");
-      const collectionId = getEnv("APPWRITE_COLLECTION_ID");
-
-      console.log(databaseId, collectionId);
-
-      if (!databaseId || !collectionId) {
-        throw new Error(
-          "Database or Collection ID is missing in environment variables."
-        );
-      }
-
-      await databases.createDocument(databaseId, collectionId, user.$id, {
+      if(user.role ==="provider"){
+      await databases.createDocument(databaseId, COLLECTION_IDS.CUSTOMERS, user.$id, {
         userId: user.$id,
-        firstName,
-        lastName,
+        fullName,
+        address,
         email,
         phone,
         countryOfResidence,
         role,
-      });
+      });}
+
+      else {
+        await databases.createDocument(databaseId, COLLECTION_IDS.PROVIDERS, user.$id, {
+          userId: user.$id,
+          fullName,
+          address,
+          email,
+          phone,
+          countryOfResidence,
+          role,
+          
+        });}
+  
+
 
       console.log("✅ User document created successfully.");
     } catch (error: any) {
@@ -106,12 +99,8 @@ class AuthService {
   // USer Google Login
   async loginWithGoogle(): Promise<void> {
     try {
-      const successRedirect =
-        getEnv("NEXT_PUBLIC_GOOGLE_SUCCESS_REDIRECT") ||
-        "http://localhost:3000/";
-      const failureRedirect =
-        getEnv("NEXT_PUBLIC_GOOGLE_FAILURE_REDIRECT") ||
-        "http://localhost:3000/authentication";
+      const successRedirect = "localhost:3000"
+      const failureRedirect = "Localhost:3000/authentication"
 
       account.createOAuth2Session(
         OAuthProvider.Google,
@@ -127,13 +116,15 @@ class AuthService {
   // Updating user Preferences
   async updatePreferences({
     countryOfResidence,
+    address,
     role,
   }: {
     countryOfResidence: string;
     role: string;
+    address: string;
   }): Promise<void> {
     try {
-      await account.updatePrefs({ countryOfResidence, role });
+      await account.updatePrefs({ countryOfResidence, role,address });
       console.log("✅ User preferences updated successfully.");
     } catch (error: any) {
       console.error("❌ Failed to update preferences:", error);
@@ -150,6 +141,7 @@ class AuthService {
 
       const userDocument = await this.getUserDocument(profileInfo.$id);
       const user = { ...profileInfo, ...userDocument };
+      localStorage.setItem('user', JSON.stringify(user));
 
       console.log("✅ User details:", user);
       return user;
@@ -162,19 +154,10 @@ class AuthService {
   //  Creating user Documents
   private async getUserDocument(userId: string) {
     try {
-      const databaseId = getEnv("APPWRITE_DATABASE_ID");
-      const collectionId = getEnv("APPWRITE_COLLECTION_ID");
-
-      if (!databaseId || !collectionId) {
-        throw new Error(
-          "Database or Collection ID is missing in environment variables."
-        );
-      }
-
       // Fetch user document directly using userId
       const response = await databases.getDocument(
         databaseId,
-        collectionId,
+        COLLECTION_IDS.CUSTOMERS,
         userId
       );
       return response;
@@ -189,6 +172,7 @@ class AuthService {
     try {
       await account.deleteSession("current");
       console.log("✅ Logout successful");
+      localStorage.removeItem("user")
     } catch (error: any) {
       console.error("❌ Logout failed:", error);
       toast.error("Logout failed. Try again.");

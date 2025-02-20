@@ -78,7 +78,7 @@ const dispatch = useAppDispatch();
           {item.price.toLocaleString()}
         </span>
         <Link
-          href={`/booking/${item.providerId._id}`}
+          href={`/booking/${item.$id}`}
           className="text-afruna-blue text-sm lg:text-xs bg-gradient-to-b from-sky-300 to-sky-100 hover:bg-gradient-to-r hover:from-sky-300 hover:to-sky-50 p-3 rounded-md transition duration-500"
         >
           Book Service

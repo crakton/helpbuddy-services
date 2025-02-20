@@ -97,22 +97,7 @@ export const feautureCategories = [
     text: "real estate",
     img: imgs.estateCategory,
   },
-  // {
-  //   text: "",
-  //   img: imgs.transpCategory,
-  // },
-  // {
-  //   text: "technology",
-  //   img: imgs.tecnCategory,
-  // },
-  // {
-  //   text: "personal",
-  //   img: imgs.percategory,
-  // },
-  // {
-  //   text: "event",
-  //   img: imgs.eventCategory,
-  // },
+
 ];
 
 export const userMethods = [
@@ -937,3 +922,10 @@ export const validBookings  = [
 
   }
 ]
+
+
+
+
+
+
+
