@@ -69,6 +69,8 @@
 @layer base {
   * {
     @apply border-border;
+
+    font-family: lato;
   }
   body {
     @apply bg-background text-foreground;
@@ -181,4 +183,9 @@ hr { width:100%;}
   to {
     opacity: 0;
   }
+}
+
+@font-face {
+  font-family: lato;
+  src: url("../assests/fonts/Lato-Regular.ttf");
 }

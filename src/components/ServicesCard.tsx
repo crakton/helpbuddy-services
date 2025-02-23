@@ -20,12 +20,11 @@ interface ServicesCardProps {
 }
 
 const ServicesCard: FC<ServicesCardProps> = ({ item }) => {
-const dispatch = useAppDispatch();
-  
+  const dispatch = useAppDispatch();
 
   const handleFavorite = useCallback(() => {
     dispatch(toggleFavoriteServices(item));
-  }, [dispatch,item]);
+  }, [dispatch, item]);
 
   return (
     <div className="bg-white p-2 pb-4 lg:pb-4 rounded-lg md:px-4 w-full sm:max-w-[17rem] md:max-w-[21rem] lg:max-w-[18rem] xl:max-w-[21rem] shadow-md flex flex-col gap-1 relative">
@@ -33,8 +32,8 @@ const dispatch = useAppDispatch();
         <div className="w-full h-full overflow-hidden relative rounded-lg">
           <Image
             src={
-              item.photos && item.photos.length > 0
-                ? item.photos[0]
+              item?.images && item.images.length > 0
+                ? item.images[0]
                 : imgs.servicesbg1
             }
             alt="partner"
@@ -43,7 +42,7 @@ const dispatch = useAppDispatch();
           />
         </div>
         <Link
-          href={`/all_services/service/${item._id}`}
+          href={`/service/${item.$id}`}
           className={classNames(
             buttonVariants({ variant: "whiteButton" }),
             "text-sm lg:text-xs h-8 absolute top-3 left-4"
@@ -51,17 +50,30 @@ const dispatch = useAppDispatch();
         >
           {item.category.name}
         </Link>
-        <button
-        onClick={handleFavorite}
-          className=" "
-        >
-          
-        <BsHeartFill className="absolute top-3 right-4 text-xl text-[#A7B7DD]" />
+        <button onClick={handleFavorite} className=" ">
+          <BsHeartFill className="absolute top-3 right-4 text-xl text-[#A7B7DD]" />
         </button>
       </div>
-      <h4 className="font-bold text-afruna-blue mt-[1rem] px-2 lg:text-sm w-full truncate">
-        {item.name}
-      </h4>
+      <div className="flex items-center mt-1 justify-center text-sm ">
+        <h4 className="font-bold text-afruna-blue  px-2 lg:text-sm w-full truncate">
+          {item.name}
+        </h4>
+
+        <p
+          style={{
+            backgroundColor: `${item.isActive ? "#83ffa0" : "#ff9ea0"}`,
+            color: `${item.isActive ? "#0abf56" : "#ff3c59"}`,
+
+            paddingTop: "5px",
+            paddingBottom: "5px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
+          }}
+          className="rounded-full"
+        >
+          {item.isActive ? "Active" : "Occupied"}
+        </p>
+      </div>
       <div className="mt-1 flex justify-between items-center px-2 lg:text-xs text-afruna-gray font-semibold">
         <span className="flex items-center text-sm gap-2 lg:gap-1">
           <HiLocationMarker className="text-[#0382BD] text-xl lg:text-lg" />
@@ -78,10 +90,10 @@ const dispatch = useAppDispatch();
           {item.price.toLocaleString()}
         </span>
         <Link
-          href={`/booking/${item.$id}`}
+          href={`/service/${item.$id}`}
           className="text-afruna-blue text-sm lg:text-xs bg-gradient-to-b from-sky-300 to-sky-100 hover:bg-gradient-to-r hover:from-sky-300 hover:to-sky-50 p-3 rounded-md transition duration-500"
         >
-          Book Service
+          View Service
         </Link>
       </div>
     </div>

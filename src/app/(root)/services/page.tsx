@@ -13,6 +13,8 @@ import NoServicesFound from "@/components/ui/NoServicesFound";
 import { providers, services } from "@/constants/data";
 import SearchComponent from "@/components/searchComponent";
 
+import { useServices } from "@/context/ServiceContext";
+
 interface pageProps {
   params: {
     categoryId:string
@@ -21,6 +23,8 @@ interface pageProps {
 
 const Page: FC<pageProps> = ({params: {categoryId}}) => {
   const [page, setPage] = useState(1);
+
+  const { services } = useServices();
 
   return (
     <main>

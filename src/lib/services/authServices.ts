@@ -1,78 +1,75 @@
+
 import { toast } from "react-toastify";
 import { account, databases, ID } from "../../../appwrite";
 import { LoginParams, RegisterParams } from "@/types/indext";
-import { OAuthProvider, Query } from "appwrite";
-import { COLLECTION_IDS } from "../../../appwrite.config";
-
-
-    const databaseId = process.env.APPWRITE_DATABASE_ID as string
+import { OAuthProvider } from "appwrite";
+import { COLLECTION_IDS, databaseId } from "../../../appwrite.config";
 
 
 
 class AuthService {
-  async verifyEmail(userId: string) {
+
+
+  async verifyEmail() {
     try {
-      const token = await account.createVerification(userId);
-      toast.success("Email verified successfully");
-      return token;
+      const response = await account.createVerification("http://localhost:3000/verify_me");
+      toast.success("Verification email sent.");
+      return response;
     } catch (error) {
-      console.log(error);
+      console.error("❌ Failed to send verification email:", error);
+      toast.error("Failed to send verification email.");
       throw error;
     }
   }
 
-  //  User REgistration
+  //  User Registration
   async register({
     fullName,
     address,
     email,
     phone,
-    countryOfResidence,
+    country,
     password,
     role,
   }: RegisterParams): Promise<void> {
-
+    const collectionId =
+        role === "Provider" ? COLLECTION_IDS.PROVIDERS : COLLECTION_IDS.CUSTOMERS;
     try {
+    
+
       // ✅ Create user account in Appwrite
       const user = await account.create(
         ID.unique(),
         email,
         password,
-        `${fullName}`
-      );
-      console.log("✅ User registered successfully:", user);
+        `${fullName}`,
 
-      await this.updatePreferences({ countryOfResidence, role,address });
-      // ✅ Log in user automatically
-      await this.verifyEmail(user.$id)
+
+
+      );
+      console.log("✅ User registered successfully:");
+
+
+      // ✅ Ensure login before updating preferences
       await this.login({ email, password });
 
       // ✅ Update user preferences
+      await this.updatePreferences({ country, role, address });
 
-      if(user.role ==="provider"){
-      await databases.createDocument(databaseId, COLLECTION_IDS.CUSTOMERS, user.$id, {
+      // ✅ Send verification email
+      await this.verifyEmail();
+
+      // ✅ Store user data in Firestore
+      
+      await databases.createDocument(databaseId as string, collectionId, user.$id, {
         userId: user.$id,
         fullName,
         address,
         email,
         phone,
-        countryOfResidence,
+        country,
         role,
-      });}
-
-      else {
-        await databases.createDocument(databaseId, COLLECTION_IDS.PROVIDERS, user.$id, {
-          userId: user.$id,
-          fullName,
-          address,
-          email,
-          phone,
-          countryOfResidence,
-          role,
-          
-        });}
-  
-
+      });
 
       console.log("✅ User document created successfully.");
     } catch (error: any) {
@@ -82,25 +79,29 @@ class AuthService {
     }
   }
 
-  // Email password Registration
-  async login({ email, password }: LoginParams): Promise<void> {
+  // Email/password Login
+  async login({ email, password }: LoginParams): Promise<User> {
     try {
-
-      console.log(email, password)
+      console.log(email, password);
       const session = await account.createEmailPasswordSession(email, password);
       console.log("✅ Login successful:", session);
+  
+      // ✅ Fetch user to ensure session persistence
+      const user = await this.getUser();
+      return user;
     } catch (error: any) {
       console.error("❌ Login failed:", error);
-      toast.error(error);
-      throw new Error(error.message);
+      toast.error(error.message);
+      throw new Error(error.message); // Ensuring consistency in function return
     }
   }
+  
 
-  // USer Google Login
+  // Google Login
   async loginWithGoogle(): Promise<void> {
     try {
-      const successRedirect = "localhost:3000"
-      const failureRedirect = "Localhost:3000/authentication"
+      const successRedirect = "http://localhost:3000";
+      const failureRedirect = "http://localhost:3000/authentication";
 
       account.createOAuth2Session(
         OAuthProvider.Google,
@@ -109,22 +110,22 @@ class AuthService {
       );
     } catch (error: any) {
       console.error("❌ Google login failed:", error);
-      toast.error(error);
+      toast.error(error.message);
     }
   }
 
   // Updating user Preferences
   async updatePreferences({
-    countryOfResidence,
+    country,
     address,
     role,
   }: {
-    countryOfResidence: string;
+    country: string;
     role: string;
     address: string;
   }): Promise<void> {
     try {
-      await account.updatePrefs({ countryOfResidence, role,address });
+      await account.updatePrefs({ country, role, address });
       console.log("✅ User preferences updated successfully.");
     } catch (error: any) {
       console.error("❌ Failed to update preferences:", error);
@@ -132,8 +133,7 @@ class AuthService {
     }
   }
 
-  // Fetching user Datas
-
+  // Fetching user data
   async getUser() {
     try {
       const profileInfo = await account.get();
@@ -141,7 +141,7 @@ class AuthService {
 
       const userDocument = await this.getUserDocument(profileInfo.$id);
       const user = { ...profileInfo, ...userDocument };
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
 
       console.log("✅ User details:", user);
       return user;
@@ -151,15 +151,23 @@ class AuthService {
     }
   }
 
-  //  Creating user Documents
+  // Fetch user document (Customers & Providers)
   private async getUserDocument(userId: string) {
     try {
-      // Fetch user document directly using userId
-      const response = await databases.getDocument(
-        databaseId,
-        COLLECTION_IDS.CUSTOMERS,
-        userId
-      );
+      let response;
+      try {
+        response = await databases.getDocument(
+          databaseId as string,
+          COLLECTION_IDS.CUSTOMERS,
+          userId
+        );
+      } catch {
+        response = await databases.getDocument(
+          databaseId as string,
+          COLLECTION_IDS.PROVIDERS,
+          userId
+        );
+      }
       return response;
     } catch (error) {
       console.error("❌ Failed to fetch user document:", error);
@@ -167,12 +175,12 @@ class AuthService {
     }
   }
 
-  //  Logout user sessions
+  // Logout user
   async logout(): Promise<void> {
     try {
       await account.deleteSession("current");
       console.log("✅ Logout successful");
-      localStorage.removeItem("user")
+      localStorage.removeItem("user");
     } catch (error: any) {
       console.error("❌ Logout failed:", error);
       toast.error("Logout failed. Try again.");

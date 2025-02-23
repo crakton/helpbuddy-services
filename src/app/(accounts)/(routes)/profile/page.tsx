@@ -18,7 +18,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
-import { setProfile } from "@/lib/redux/features/slices/profileSlice";
 import { IUser } from "@/interfaces";
 import * as Select from "@radix-ui/react-select";
 import { verifyImageUrl } from "@/utils/verify_image_url";
@@ -302,7 +301,7 @@ const ProfilePage: FC<pageProps> = ({}) => {
                   Country of Resident
                 </label>
                 <ReactFlagsSelect
-                  placeholder={user?.countryOfResidence}
+                  placeholder={user?.country}
                   
                   id="country"
                   searchable

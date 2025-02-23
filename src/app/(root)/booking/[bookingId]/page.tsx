@@ -5,11 +5,11 @@ import { imgs } from "@/constants/images";
 import getSymbolFromCurrency from "currency-symbol-map";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FC, useCallback, useEffect, useMemo } from "react";
-import { BsStarFill } from "react-icons/bs";
+import { FC, useState} from "react";
 import { HiLocationMarker, HiMail } from "react-icons/hi";
 import { toast } from "react-toastify";
 import { verifyImageUrl } from "@/utils/verify_image_url";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 interface pageProps {
   params: {
@@ -19,11 +19,39 @@ interface pageProps {
 
 const BookingsPage: FC<pageProps> = ({ params: { bookingId } }) => {
   const router = useRouter();
+
+  const [confirmed, setConfirmed] = useState(false)
+
+  //generate a handle confirm function to book a service
+  const handleConfirm = async () => {
+    try {
+      // Here you would call your backend API to confirm the booking
+      // For now, we simulate the confirmation by setting the status to "Confirmed"
+      service.status = "Confirmed";
+      router.push("/bookings")
+      setConfirmed(true);
+
+      // Show success toast
+      toast.success("Booking confirmed successfully!");
+    } catch (error) {
+      // Show error toast
+      toast.error("Failed to confirm booking. Please try again later.");
+    }
+  };
+
+  //generate a handleCancel function to
+  const handleCancel = () => {
+    setConfirmed(false)
+    router.push("/services");
+  };
+;
+
+
   const service = {
     _id: "",
     photos: [],
     name: "",
-    status: "",
+    status: "Confirmed",
     createdAt: Date.now(),
     amount: "",
     location: "",
@@ -38,7 +66,7 @@ const BookingsPage: FC<pageProps> = ({ params: { bookingId } }) => {
       name: "Amina Bello",
       email: "",
       rating: 4.5,
-      avatar: imgs.provider2,
+      avatar: imgs.provider2 || "",
       location: "Lagos",
       contact: "+2348000000006",
       createdAt: new Date().toISOString(),
@@ -71,7 +99,7 @@ const BookingsPage: FC<pageProps> = ({ params: { bookingId } }) => {
             <div className="flex justify-start w-fit gap-2 items-center">
               <div className=" w-[3rem] h-[3rem] rounded-full overflow-hidden relative flex justify-center items-center">
                 <Image
-                  src={verifyImageUrl(service.provider?.avatar)}
+                  src={verifyImageUrl(service.providerId?.avatar)}
                   alt={`vendor image`}
                   fill
                 />
@@ -127,10 +155,12 @@ const BookingsPage: FC<pageProps> = ({ params: { bookingId } }) => {
           </div>
         </div>
         <div className="flex justify-end">
-          <Button variant={"primary"} type="button">
-            Confirm service booking
+          <Button onClick={()=>setConfirmed(true)} variant={"primary"} type="button">
+            Book This Service
           </Button>
         </div>
+
+        <ConfirmModal onConfirm={handleConfirm} isOpen={confirmed} message="Do you want to book this service?" onCancel={handleCancel} title="Book a service " key={service._id}/>
       </section>
     </>
   );

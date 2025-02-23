@@ -2,42 +2,50 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import authService from "@/lib/services/authServices";
 import { RegisterParams, LoginParams, User } from "@/types/indext";
-import bookingServices from "../lib/services/bookingServices"
-import { getServices } from "@/lib/services/serviceServices";
-
+import Documents from "../lib/services/DocumentServices"; // Import the Documents class
 
 interface AuthContextProps {
   user: User | null;
   loading: boolean;
+  documents: Documents | null; // Instance of Documents class
   register: (data: RegisterParams) => Promise<void>;
   login: (data: LoginParams) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  setUser:any;
+
   updatePreferences: (data: Partial<User>) => Promise<void>;
   fetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [documents, setDocuments] = useState<Documents | null>(null);
 
-  // Fetch user details from Appwrite account and database
-
+  // Fetch user details and initialize Documents class
   const fetchUser = async () => {
     setLoading(true);
-   
     try {
       const userData = await authService.getUser(); 
       if (userData) {
+        const userPreferences = {
+          role: userData.prefs.role || "",
+        };
+
         setUser({
           id: userData.$id,
           name: userData.name,
           email: userData.email,
           phoneNumber: userData.prefs.phoneNumber || "",
-          countryOfResidence: userData.prefs.countryOfResidence || "",
-          role: userData.prefs.role || "",
+          country: userData.prefs.country || "",
+          role: userPreferences.role,
         });
+
+        // Initialize the Documents class with user preferences
+        setDocuments(new Documents(userPreferences));
       }
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -47,50 +55,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     fetchUser();
-
   }, []);
 
-  // Register user and update state
   const register = async (data: RegisterParams) => {
     await authService.register(data);
     await fetchUser();
   };
 
-  // Login user and update state
   const login = async (data: LoginParams) => {
     await authService.login(data);
     await fetchUser();
   };
 
-  // Login with Google and update state
   const loginWithGoogle = async () => {
     await authService.loginWithGoogle();
     await fetchUser();
   };
 
-  // Logout user and reset state
   const logout = async () => {
     await authService.logout();
     setUser(null);
+    setDocuments(null);
   };
 
-  // Update user preferences and state
-  const updatePreferences = async (data:any) => {
+  const updatePreferences = async (data: Partial<User>) => {
     await authService.updatePreferences(data);
     await fetchUser();
   };
+
+console.log("user Documents are ", documents)
 
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
+        documents,
         register,
         login,
         loginWithGoogle,
         logout,
         updatePreferences,
         fetchUser,
+        setUser
       }}
     >
       {children}

@@ -12,3 +12,6 @@ export const COLLECTION_IDS = {
   SERVICES: "67aa08cc0026b8fc754f",
   SUB_CATEGORIES: "67aa0b6a00189c453297",
 } as const;
+
+
+export const databaseId = process.env.APPWRITE_DATABASE_ID

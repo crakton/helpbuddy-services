@@ -10,13 +10,12 @@ export interface IService {
   desc: string;
   price: number;
   additionalService: [];
-  providerId:string;
-  // providerId: {
-  //   _id: string;
-  //   avatar:string;
-  //   firstName: string;
-  //   lastName: string;
-  // };
+  providerId: {
+    _id: string;
+    avatar:string;
+    firstName: string;
+    lastName: string;
+  };
   availability: {
     days: string[];
     hours: {
@@ -37,7 +36,7 @@ export interface IService {
   verified?:boolean;
 }
 export interface IServices {
-  _id: string;
+  $id: string;
   name: string;
   category: ICategory;
   subCategory: string;
@@ -47,7 +46,7 @@ export interface IServices {
   price: number;
   additionalService: [];
   providerId: {
-    _id: string;
+    $d: string;
     avatar:string;
     firstName: string;
     lastName: string;
@@ -59,7 +58,8 @@ export interface IServices {
       to: string | null;
     };
   };
-  photos: string[];
+  isActive: boolean;
+  images: string[];
   licenseAndCertification: [];
   insuranceCoverage: [];
   publish: boolean;

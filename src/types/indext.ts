@@ -12,7 +12,7 @@ export type RegisterParams = {
   address: string;
   email: string;
   phone: string;
-  countryOfResidence: string;
+  country: string;
   password: string;
   role: string;
 };
@@ -22,9 +22,10 @@ export interface User {
   name: string;
   email: string;
   phoneNumber?: string;
-  countryOfResidence?: string;
+  country?: string;
   role?: string;
   profilePicture?: string;
+  avatar?: string;
 }
 
 export interface Category {

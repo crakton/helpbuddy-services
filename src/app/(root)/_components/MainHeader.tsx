@@ -7,7 +7,7 @@ import {
   MdOutlineLogout,
 } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-import { IoIosNotifications, IoMdMenu } from "react-icons/io";
+import {IoMdMenu } from "react-icons/io";
 import Link from "next/link";
 import Image from "next/image";
 import { imgs } from "@/constants/images";
@@ -17,7 +17,7 @@ import { ItemPicker } from "@/lib/utils/ItemPicker";
 import { AiFillAccountBook } from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
 import AllServicesModel from "@/components/AllServicesModel";
-import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAppDispatch} from "@/hooks";
 import { verifyImageUrl } from "@/utils/verify_image_url";
 import { useAuth } from "@/context/UserContext";
 
@@ -127,16 +127,6 @@ console.log(user?.profilePicture)
           <div className="flex justify-center items-center gap-2 lg:gap-3">
             {true ? (
               <>
-                {/* <Link href={"/"} className="relative">
-                  <IoIosNotifications className="text-[1.4rem] sm:text-[1.6rem]" />
-                  <span className="absolute top-0 right-0 text-white bg-rose-400 w-[0.75rem] h-[0.75rem] sm:w-[0.8rem] sm:h-[0.8rem] text-[8px] rounded-full flex justify-center items-center">
-                    {" "}
-                    3
-                  </span>
-                </Link> */}
-                {/* <Link href={"/chat"}>
-                  <BsFillChatLeftTextFill className="text-[0.95rem] sm:text-[1.1rem]" />
-                </Link> */}
                 <ItemPicker
                   mobileClassName="hidden md:flex lg:hidden xl:flex text-sm lg:text-base"
                   triggerClassName="flex gap-2 items-center capitalize"
@@ -161,7 +151,7 @@ console.log(user?.profilePicture)
                   profileLinks={[
                     {
                       name: "Profile",
-                      href: "/profile",
+                      href: `${user?"/profile":"/authentication"}`,
                       icon: <FaUser />,
                     },
                     {

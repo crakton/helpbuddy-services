@@ -4,6 +4,7 @@ import "./globals.css";
 import ReduxWrapper from "@/lib/providers/redux_wrapper";
 import { AuthProvider } from "@/context/UserContext"
 import ServiceProvider from "@/context/ServiceContext";
+import { BookingProvider } from "@/context/BookingContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,11 +18,14 @@ function RootLayout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
+          <BookingProvider>
+
 
         <ServiceProvider>
 
         <ReduxWrapper>{children}</ReduxWrapper>
         </ServiceProvider >
+          </BookingProvider>
         </AuthProvider>
       </body>
     </html>

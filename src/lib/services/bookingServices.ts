@@ -1,7 +1,9 @@
-import { databases } from "../../../appwrite";
+import { IBooking } from "@/interfaces";
+import { databases, ID } from "../../../appwrite";
 import authService from "./authServices";
+import { COLLECTION_IDS, databaseId } from "../../../appwrite.config";
 
-// Function to get user ID
+// Function to get user data
 const getUserData = async () => {
   try {
     const userData = await authService.getUser();
@@ -13,55 +15,72 @@ const getUserData = async () => {
 };
 
 class BookingServices {
-  createBooking = async (data: {}) => {
+  
+  createBooking = async (data: IBooking) => {
     try {
+      console.log("Generating unique booking ID...");
+      const newBookingId = ID.unique(); // Generate the unique ID manually
+      console.log("New booking ID:", newBookingId);
+  
       console.log("Fetching user data...");
       const user = await getUserData();
-
+  
       if (!user) {
         console.error("User not found. Cannot create booking.");
         return;
       }
-
+  
       console.log("Creating booking for user ID:", user.$id);
       const response = await databases.createDocument(
-        "679a0d6e000c64280639", // Database ID
-        "67a856b900251ea5d062", // Collection ID
-        user.$id, // Use user ID as the document ID
-        data // Pass object, not a string
+        databaseId as string, 
+        COLLECTION_IDS.BOOKINGS, 
+        newBookingId, // Ensure this is used
+        data
       );
-
+  
       console.log("Booking created:", response);
       return response;
-    } catch (error) {
-      console.error("Error creating booking:", error);
+    } catch (error: any) {
+      console.error("Error creating booking:", error?.response || error);
+  
+      // Check if the error contains details about the existing document
+      if (error.response && error.response.message) {
+        console.error("Conflict Error Details:", error.response);
+        
+        // Try fetching existing documents to log conflicting ID
+        const existingBookings = await databases.listDocuments(
+          databaseId as string,
+          COLLECTION_IDS.BOOKINGS
+        );
+  
+        console.log("Existing bookings:", existingBookings.documents);
+      }
+      
+      return null;
     }
   };
-
   getBookings = async () => {
     try {
       console.log("Fetching user data...");
       const user = await getUserData();
-
+  
       if (!user) {
         console.error("User not found. Cannot fetch booking.");
         return null;
       }
-
+  
       console.log("Fetching booking for user ID:", user.$id);
-      const response = await databases.getDocument(
-        "679a0d6e000c64280639", // Database ID
-        "67a856b900251ea5d062", // Collection ID
-        user.$id // User ID as the document ID
+  
+      // List all documents in the bookings collection
+      const response = await databases.listDocuments(
+        databaseId as string, // Database ID
+        COLLECTION_IDS.BOOKINGS, // Collection ID
       );
-
-      // Parse providerId if stored as JSON
-      if (response.providerId) {
-        response.providerId = JSON.parse(response.providerId);
-      }
-
-      console.log("Booking retrieved:", response);
-      return response;
+  
+      // Filter the documents based on the userId
+      const booking = response.documents.filter(doc => doc.userId === user.$id);
+        return booking;
+      
     } catch (error) {
       console.error("Error fetching booking:", error);
       return null;

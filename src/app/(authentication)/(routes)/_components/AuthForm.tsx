@@ -1,10 +1,10 @@
 "use client";
 import { imgs } from "@/constants/images";
 import Image from "next/image";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import {  useForm, FieldValues } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import {PhoneInput } from "react-international-phone";
+import { CountryIso2, PhoneInput } from "react-international-phone";
 import ReactFlagsSelect from "react-flags-select";
 import "react-international-phone/style.css";
 import getCountryUtil from "@/lib/utils/get-country.util";
@@ -26,16 +26,21 @@ type Variant = "LOGIN" | "REGISTER";
 const AuthForm: FC<AuthFormProps> = ({}) => {
   const [variant, setVariant] = useState<Variant>("LOGIN");
   const [agreed, setAgreed] = useState(false);
+  const toggleVariant = useCallback(() => {
+    if (variant === "LOGIN") {
+      setVariant("REGISTER");
+    } else {
+      setVariant("LOGIN");
+    }
+  }, [variant]);
 
+  // use State
   const [phone, setPhone] = useState("");
+  const [currentCountry, setCurrentCountry] = useState<CountryIso2>("ng");
   const [country, setCountry] = useState<{ Code: string; Name: string }>({
     Code: "",
     Name: "",
   }); 
-
-  const ROLES = ["Provider", "Customer"];
-
-  const [role,setRole] = useState(ROLES[1])
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -55,8 +60,9 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
   }, []);
   const handleGoogleLogin = useCallback(async () => {}, []);
   const {
-    formState: { errors},
+    formState: { errors, isValid },
     register,
+    reset,
     handleSubmit,
   } = useForm<FieldValues>({
     defaultValues: {
@@ -65,7 +71,7 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
       email: "",
       password: "",
       phone:phone,
-      countryOfResidence:country
+      country:country
       
     
     },
@@ -78,11 +84,11 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
     const formData = {
       ...data,
       phone: phone,  // Explicitly add the phone state value
-      countryOfResidence: country.Name,  // Extract country name from the selected country object
+      country: country.Name,  // Extract country name from the selected country object
       role,  // Ensure role is included
     };
   
-    console.log(formData);
+    console.log(formData, "this is the form data");
 
     setIsLoading(true)
   
@@ -106,15 +112,10 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
 
 
       const user = await authService.login(data);
-
-      if (user?.role !== role) {
-        toast.error(`Access denied. You are registered as a ${user?.role}`);
-        return;
-        setIsLoading(false)
-      }
+      console.log("User Role", user.role)
 
       toast.success("Login successful! Redirecting...");
-      router.push(role === "Provider" ? "localhost:3000/" : "localhost:3000/providers");
+      router.push(`${role === "Provider" ? "/" : "/providers"}`);
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Login failed!");
       setIsLoading(false)
@@ -122,9 +123,13 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
   };
 
 
+  const ROLES = ["Provider", "Customer"];
+
+  const [role,setRole] = useState(ROLES[1])
 
   const selectRole = (selectedRole: string) => {
     setRole(selectedRole);
+    console.log("Selected Role:", selectedRole); // Debugging output
   };
   
 
@@ -134,6 +139,8 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
   const handleRememberMe = () => {};
 
   const [rememberMe, setRemeberMe] = useState(false);
+
+  const login = false;
 
   return (
     <>
@@ -213,13 +220,19 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
                         marginBottom: "0.1rem",
                       },
                     }}
-                    charAfterDialCode="-"
+                    charAfterDialCode=""
                     placeholder="phone number"
                     className="flex mt-1 justify-between items-center border-[2px] focus-within:border-[2px] focus-within:border-[#FFDBB6] focus-within:shadow-md w-full text-sm
                    font-medium rounded-md placeholder:text-gray-400 focus-visible:shadow-md 
                    transition duration-300 sm:text-sm sm:leading-6"
                   />
                 }
+                {/* {!isPhoneValid && (
+                <span
+                  ref={phoneValidationRef}
+                  className="text-red-500 block bg-white rounded-sm w-fit p-1"
+                ></span>
+              )} */}
               </fieldset>
             ) : null}
           </aside>
@@ -240,7 +253,16 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
                   // customLabels={}
                   selectButtonClassName="py-3"
                   className="myCustomFlagsSelect mb-0 mt-1 "
-                  />
+                  // border-[2px] focus-within:border-[2px] focus-within:border-[#FFDBB6] focus-within:shadow-md w-full text-sm
+                  // font-medium  rounded-md placeholder:text-gray-400 focus-visible:shadow-md
+                  // transition duration-300 sm:text-sm sm:leading-6
+                />
+                {/* {country.Name === "" && (
+                  <span
+                    ref={localeRef}
+                    className="text-red-500 block bg-red-100 rounded-sm w-fit p-1"
+                  ></span>
+                )} */}
               </fieldset>
             ) : null}
             <Input
@@ -357,6 +379,11 @@ const AuthForm: FC<AuthFormProps> = ({}) => {
     <p>Sign Up</p>:""
             }
             {!isLoading && variant=="LOGIN"? <p>Login</p>:""}
+            {/* {variant === "REGISTER" ? (
+             ""
+            ) : (
+              <span>Log in</span>
+            )} */}
           </Button>
 
           <div className="relative mb-6">
